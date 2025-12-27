@@ -213,7 +213,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     
     doc.add_paragraph()  # Espacio
-    doc.add_paragraph()  # Espacio
     
     # ========================================================================
     # RESUMEN DEL RENDIMIENTO
