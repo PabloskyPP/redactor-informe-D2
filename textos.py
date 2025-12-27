@@ -25,20 +25,21 @@ PARRAFOS_FIJOS = {
 # ============================================================================
 
 # VAR - Variabilidad del rendimiento
+# Textos compartidos para evitar duplicación
+_VAR_ALTO_TEXTO = """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse."""
+
+_VAR_ALTO_ESPECIAL_TEXTO = """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse. También se percibe aquí un elevado cansancio o fatiga durante el tiempo que duró la tarea, dado que la serie de menor rendimiento se obtuvo más hacia el final de la tarea, en comparación con la de mayor rendimiento."""
+
+_VAR_BAJO_TEXTO = """El bajo nivel de variabilidad observado sugiere una alta consistencia y estabilidad en el rendimiento, indicando una buena capacidad para sostener el esfuerzo atencional de forma uniforme durante toda la tarea."""
+
 PARRAFOS_VAR = {
-    'alto': """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse.""",
-    
-    'alto_especial': """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse. También se percibe aquí un elevado cansancio o fatiga durante el tiempo que duró la tarea, dado que la serie de menor rendimiento se obtuvo más hacia el final de la tarea, en comparación con la de mayor rendimiento.""",
-    
-    'muy alto': """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse.""",
-    
-    'muy alto_especial': """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse. También se percibe aquí un elevado cansancio o fatiga durante el tiempo que duró la tarea, dado que la serie de menor rendimiento se obtuvo más hacia el final de la tarea, en comparación con la de mayor rendimiento.""",
-    
+    'alto': _VAR_ALTO_TEXTO,
+    'alto_especial': _VAR_ALTO_ESPECIAL_TEXTO,
+    'muy alto': _VAR_ALTO_TEXTO,
+    'muy alto_especial': _VAR_ALTO_ESPECIAL_TEXTO,
     'normal': """El índice de variación se sitúa dentro de valores esperables, lo que indica una ejecución relativamente estable y consistente a lo largo de la prueba, sin fluctuaciones marcadas en el ritmo de trabajo.""",
-    
-    'bajo': """El bajo nivel de variabilidad observado sugiere una alta consistencia y estabilidad en el rendimiento, indicando una buena capacidad para sostener el esfuerzo atencional de forma uniforme durante toda la tarea.""",
-    
-    'muy bajo': """El bajo nivel de variabilidad observado sugiere una alta consistencia y estabilidad en el rendimiento, indicando una buena capacidad para sostener el esfuerzo atencional de forma uniforme durante toda la tarea."""
+    'bajo': _VAR_BAJO_TEXTO,
+    'muy bajo': _VAR_BAJO_TEXTO
 }
 
 # TR - Velocidad de procesamiento
