@@ -2,11 +2,13 @@
 Módulo para generar el informe en formato DOCX
 """
 import os
+from datetime import datetime
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor, Emu
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
+from PIL import Image
 from textos import (
     PARRAFOS_FIJOS, PARRAFOS_VAR, PARRAFOS_TR, 
     PARRAFOS_O, PARRAFOS_C, PARRAFOS_CON,
@@ -107,9 +109,10 @@ def agregar_textbox_vertical(paragraph, text, x_pos, y_pos, width=Inches(0.3), h
         textbox_element = parse_xml(textbox_xml)
         paragraph._p.append(textbox_element)
     except Exception as e:
-        # Si hay error en la creación del textbox, simplemente no lo añadimos
+        # Si hay error en la creación del textbox, registrar advertencia pero continuar
         # para no romper el documento
-        pass
+        import warnings
+        warnings.warn(f"No se pudo crear textbox: {e}")
 
 
 def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
@@ -151,7 +154,6 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
         fecha_app_run.font.size = Pt(14)
     
     # Fecha del informe
-    from datetime import datetime
     fecha_actual = datetime.now().strftime("%d/%m/%Y")
     fecha_informe_run = info.add_run(f"Fecha del informe: {fecha_actual}\n")
     fecha_informe_run.font.size = Pt(14)
@@ -287,7 +289,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         page_height = section.page_height
         
         # Leer dimensiones de la imagen
-        from PIL import Image
         try:
             img = Image.open(grafico_path)
             img_width, img_height = img.size

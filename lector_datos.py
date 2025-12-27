@@ -23,10 +23,17 @@ def leer_datos_excel(ruta_archivo):
         sub_num = df_info['sub_num'].iloc[0] if 'sub_num' in df_info.columns else None
         
         # Procesar nombre completo y nombre (primer token)
-        if sub_num:
+        # Verificar que sub_num es válido (no None, no NaN, no cadena vacía)
+        import math
+        if sub_num and not (isinstance(sub_num, float) and math.isnan(sub_num)):
             nombre_completo = str(sub_num).strip()
             # Obtener solo el primer token (antes del primer espacio)
-            nombre = nombre_completo.split()[0] if nombre_completo else nombre_completo
+            # Verificar que hay contenido antes de dividir
+            if nombre_completo:
+                tokens = nombre_completo.split()
+                nombre = tokens[0] if tokens else nombre_completo
+            else:
+                nombre = nombre_completo
         else:
             nombre_completo = None
             nombre = None
