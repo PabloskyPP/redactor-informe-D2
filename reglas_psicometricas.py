@@ -293,15 +293,15 @@ def clasificar_VAR(VAR, edad):
     
     # Interpretación inversa: menos variabilidad = mejor (más estable)
     if VAR < baremos[grupo]['pc20']:
-        return 'muy baja'  # Muy variable
+        return 'muy bajo'  # Muy variable
     elif VAR < baremos[grupo]['pc40']:
-        return 'baja'  # Variable
+        return 'bajo'  # Variable
     elif VAR < baremos[grupo]['pc60']:
         return 'normal'
     elif VAR < baremos[grupo]['pc80']:
-        return 'alta'  # Estable
+        return 'alto'  # Estable
     else:
-        return 'muy alta'  # Muy estable
+        return 'muy alto'  # Muy estable
 
 
 def obtener_puntuaciones_tipicas(resultados):
