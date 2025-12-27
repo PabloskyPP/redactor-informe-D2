@@ -15,7 +15,7 @@ Este archivo muestra cómo usar el programa paso a paso
 RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\2312_21312.xlsx"
 RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
 
-# 3. Configura el nombre del evaluado (aparecerá en el informe)
+# 3. Configura el nombre del evaluado (opcional - se usará sub_num del Excel si está disponible)
 NOMBRE_EVALUADO = "Juan Pérez"
 
 # ============================================================================
@@ -36,6 +36,9 @@ def generar_informe_completo():
     # Leer datos
     datos = leer_datos_excel(RUTA_EXCEL)
     print(f"Edad del evaluado: {datos['edad']} años")
+    if datos.get('nombre_completo'):
+        print(f"Nombre completo: {datos['nombre_completo']}")
+        print(f"Nombre: {datos['nombre']}")
     
     # Calcular puntuaciones directas
     resultados = calcular_puntuaciones_directas(datos)

@@ -14,7 +14,7 @@ def main():
     # Configuración
     RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\2312_21312.xlsx"
     RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
-    NOMBRE_CASO = "caso"  # Cambiar por el nombre real del evaluado
+    NOMBRE_CASO = "caso"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
     print("GENERADOR DE INFORME TEST D2 - ATENCIÓN")
@@ -26,6 +26,9 @@ def main():
     try:
         datos = leer_datos_excel(RUTA_EXCEL)
         print(f"    Edad del evaluado: {datos['edad']} años")
+        if datos.get('nombre_completo'):
+            print(f"    Nombre completo: {datos['nombre_completo']}")
+            print(f"    Nombre: {datos['nombre']}")
         print(f"    Datos del test D2 cargados correctamente")
     except Exception as e:
         print(f"   X Error al leer el archivo: {e}")

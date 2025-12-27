@@ -36,7 +36,12 @@ proyecto_d2/
 El archivo Excel debe tener la siguiente estructura:
 
 ### Hoja "info"
-- Debe contener una columna `age` con la edad del evaluado
+- `age`: Edad del evaluado (obligatorio)
+- `sub_num`: Nombre completo del encuestado (opcional pero recomendado)
+  - Puede ser un identificador simple o nombre completo con apellidos
+  - El programa extraerá automáticamente:
+    - `nombre_completo`: valor completo de sub_num
+    - `nombre`: solo el primer token (antes del primer espacio)
 
 ### Hoja "D2"
 Debe contener las siguientes columnas:
@@ -118,17 +123,45 @@ El programa clasifica automáticamente las puntuaciones según baremos por edad:
 
 El informe generado incluye:
 
-1. **Portada** con título del test
+1. **Portada** (Primera página)
+   - Título del test: "D2, TEST DE ATENCIÓN"
+   - Nombre completo del encuestado (extraído de `sub_num`)
+   - Edad del evaluado
+   - Fecha de aplicación (si está disponible)
+   - Fecha del informe (generada automáticamente)
+   - Nota de confidencialidad
 2. **Introducción** personalizada con el nombre del evaluado
-3. **Descripción de la prueba** y variables técnicas
-4. **Tabla de resultados** con puntuaciones directas y clasificaciones
-5. **Interpretación detallada** de cada índice:
+3. **Descripción de la prueba** y variables técnicas (TR, TA, O, C, E, TOT, CON, VAR)
+4. **GRÁFICO D2** (Página 3)
+   - Imagen escalada para ocupar verticalmente toda la página
+   - Mantiene proporción sin deformación
+   - Cuadros de texto rotados verticalmente con puntuaciones (TR, TA, O, C)
+   - Posiciones de cuadros configurables desde el código Python
+5. **Tabla de resultados** con puntuaciones directas y clasificaciones
+6. **Interpretación detallada** de cada índice:
    - Variabilidad del rendimiento (VAR)
    - Velocidad de procesamiento (TR)
    - Errores de omisión (O)
    - Errores de comisión (C)
    - Concentración (CON)
-6. **Síntesis del perfil atencional** con interpretación integrada
+7. **Síntesis del perfil atencional** con interpretación integrada
+
+## 🔧 Configuración Avanzada
+
+### Personalización de Posiciones de Cuadros de Texto en el Gráfico
+
+Las posiciones de los cuadros de texto sobre el gráfico D2 pueden ajustarse editando el diccionario `textbox_positions` en `generador_docx.py` (línea ~310):
+
+```python
+textbox_positions = {
+    'TR': {'x': Inches(0.5), 'y': Inches(2.0)},   # Posición para TR
+    'TA': {'x': Inches(1.5), 'y': Inches(2.5)},   # Posición para TA
+    'O': {'x': Inches(2.5), 'y': Inches(3.0)},    # Posición para O
+    'C': {'x': Inches(3.5), 'y': Inches(3.5)},    # Posición para C
+}
+```
+
+Los valores se especifican en pulgadas desde el borde de la página. Ajuste estos valores para alinear los cuadros con las líneas correspondientes del gráfico.
 
 ## 🔧 Solución de Problemas
 
