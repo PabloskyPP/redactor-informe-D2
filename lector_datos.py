@@ -107,10 +107,14 @@ def calcular_puntuaciones_directas(datos):
     # CON = TA_total - C_total
     resultados['CON'] = resultados['TA_total'] - resultados['C_total']
     
-    # TR_max y TR_min
+    # TR_max y TR_min con sus posiciones (índices de fila)
     if resultados['TR_por_fila']:
         resultados['TR_max'] = max(resultados['TR_por_fila'])
         resultados['TR_min'] = min(resultados['TR_por_fila'])
         resultados['VAR'] = resultados['TR_max'] - resultados['TR_min']
+        
+        # Guardar las posiciones (índices) de TR_max y TR_min
+        resultados['TR_max_pos'] = resultados['TR_por_fila'].index(resultados['TR_max'])
+        resultados['TR_min_pos'] = resultados['TR_por_fila'].index(resultados['TR_min'])
     
     return resultados

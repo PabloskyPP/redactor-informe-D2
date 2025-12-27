@@ -304,6 +304,34 @@ def clasificar_VAR(VAR, edad):
         return 'muy alto'  # Muy estable
 
 
+def detectar_condicion_var_especial(resultados):
+    """
+    Detecta si se cumple la condición especial de VAR:
+    - VAR es alto o muy alto
+    - Y la serie con TR_max está 7 filas o más por detrás de la serie con TR_min
+    
+    Args:
+        resultados: Dict con puntuaciones directas y edad
+        
+    Returns:
+        bool: True si se cumple la condición especial
+    """
+    edad = resultados['edad']
+    clasificacion_var = clasificar_VAR(resultados['VAR'], edad)
+    
+    # Verificar si VAR es alto o muy alto
+    if clasificacion_var not in ['alto', 'muy alto']:
+        return False
+    
+    # Verificar separación de filas
+    # TR_max debe estar 7 o más filas POR DETRÁS (después) de TR_min
+    if 'TR_max_pos' in resultados and 'TR_min_pos' in resultados:
+        separacion = resultados['TR_max_pos'] - resultados['TR_min_pos']
+        return separacion >= 7
+    
+    return False
+
+
 def obtener_puntuaciones_tipicas(resultados):
     """
     Obtiene las puntuaciones típicas basadas en las puntuaciones directas
@@ -316,12 +344,15 @@ def obtener_puntuaciones_tipicas(resultados):
     """
     edad = resultados['edad']
     
-    return {
+    clasificaciones = {
         'TR': clasificar_TR(resultados['TR_total'], edad),
         'TA': clasificar_TA(resultados['TA_total'], edad),
         'O': clasificar_O(resultados['O_total'], edad),
         'C': clasificar_C(resultados['C_total'], edad),
-        'TOT': clasificar_TOT(resultados['TOT_total'], edad),
+        'TOT': clasificar_TOT(resultados['TOT'], edad),
         'CON': clasificar_CON(resultados['CON'], edad),
-        'VAR': clasificar_VAR(resultados['VAR'], edad)
+        'VAR': clasificar_VAR(resultados['VAR'], edad),
+        'VAR_especial': detectar_condicion_var_especial(resultados)
     }
+    
+    return clasificaciones

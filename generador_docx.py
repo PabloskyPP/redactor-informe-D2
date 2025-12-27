@@ -58,7 +58,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(12)
     
     doc.add_paragraph(PARRAFOS_FIJOS['descripcion_prueba'])
-    doc.add_paragraph(PARRAFOS_FIJOS['indicadores'])
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
@@ -160,6 +159,59 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
+    # INSERTAR GRÁFICO D2
+    # ========================================================================
+    import os
+    from docx.shared import Inches
+    
+    # Ruta al gráfico (en el mismo directorio que el script)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    grafico_path = os.path.join(script_dir, 'grafico_D2.png')
+    
+    if os.path.exists(grafico_path):
+        # Añadir el gráfico
+        # Obtener dimensiones de página (ignorar márgenes como se especifica)
+        section = doc.sections[0]
+        page_width = section.page_width
+        page_height = section.page_height
+        
+        # Leer dimensiones de la imagen
+        from PIL import Image
+        try:
+            img = Image.open(grafico_path)
+            img_width, img_height = img.size
+            img_aspect = img_width / img_height
+            
+            # Calcular el tamaño máximo manteniendo la proporción
+            # Usar el ancho de página como límite
+            max_width = page_width
+            max_height = page_height
+            
+            # Calcular dimensiones finales
+            if img_aspect > (max_width / max_height):
+                # La imagen es más ancha proporcionalmente
+                final_width = max_width
+                final_height = max_width / img_aspect
+            else:
+                # La imagen es más alta proporcionalmente
+                final_height = max_height
+                final_width = max_height * img_aspect
+            
+            # Añadir la imagen al documento
+            paragraph_img = doc.add_paragraph()
+            paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            run_img = paragraph_img.add_run()
+            run_img.add_picture(grafico_path, width=int(final_width * 0.9))  # 90% del ancho para un margen mínimo
+        except ImportError:
+            # Si PIL no está disponible, usar un tamaño fijo razonable
+            paragraph_img = doc.add_paragraph()
+            paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            run_img = paragraph_img.add_run()
+            run_img.add_picture(grafico_path, width=Inches(7))
+    
+    doc.add_paragraph()  # Espacio
+    
+    # ========================================================================
     # RESUMEN DEL RENDIMIENTO
     # ========================================================================
     titulo_resumen = doc.add_paragraph()
@@ -170,8 +222,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     
     # Párrafos fijos
     doc.add_paragraph(PARRAFOS_FIJOS['rendimiento_general'].format(nombre=nombre_caso))
-    doc.add_paragraph(PARRAFOS_FIJOS['velocidad_trabajo'])
-    doc.add_paragraph(PARRAFOS_FIJOS['equilibrio'])
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
@@ -184,7 +234,12 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(11)
     
-    doc.add_paragraph(PARRAFOS_VAR[clasificaciones['VAR']].format(nombre=nombre_caso))
+    # Seleccionar párrafo VAR según condición especial
+    var_key = clasificaciones['VAR']
+    if clasificaciones.get('VAR_especial', False) and var_key in ['alto', 'muy alto']:
+        var_key = var_key + '_especial'
+    
+    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre_caso))
     doc.add_paragraph()  # Espacio
     
     # VELOCIDAD DE PROCESAMIENTO
@@ -241,8 +296,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         clasificaciones['C'],
         clasificaciones['CON'],
         clasificaciones['VAR'],
-        resultados['TR_max'],
-        resultados['TR_min'],
+        clasificaciones.get('VAR_especial', False),
         nombre_caso
     )
     doc.add_paragraph(parrafo_cierre)
