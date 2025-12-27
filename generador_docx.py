@@ -141,7 +141,7 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
     # Nombre del encuestado
     nombre_run = info.add_run(f"Nombre del encuestado: {nombre_completo}\n")
     nombre_run.bold = True
-    nombre_run.font.size = Pt(16)
+    nombre_run.font.size = Pt(14)
     
     # Edad
     if datos.get('edad'):
@@ -164,7 +164,8 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
     # Nota confidencial
     nota = doc.add_paragraph()
     nota.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    nota_run = nota.add_run("Informe confidencial - Uso profesional y educativo")
+    nota_run = nota.add_run(f"Este es un informe de evaluación cognitiva, obtenido a partir del rendimiento de {nombre_completo} en la prueba D2, test de atención.")
+    nota.add_run("\nInforme confidencial de uso profesional y educativo")
     nota_run.italic = True
     nota_run.font.size = Pt(12)
 
@@ -207,17 +208,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # ========================================================================
     # TÍTULO E INTRODUCCIÓN
     # ========================================================================
-    titulo = doc.add_paragraph()
-    titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    run = titulo.add_run(PARRAFOS_FIJOS['titulo'])
-    run.bold = True
-    run.font.size = Pt(16)
-    doc.add_paragraph()  # Espacio
-    
-    # Introducción
-    doc.add_paragraph(PARRAFOS_FIJOS['introduccion'].format(nombre=nombre))
-    doc.add_paragraph()  # Espacio
-    
     # ========================================================================
     # DESCRIPCIÓN DE LA PRUEBA
     # ========================================================================
