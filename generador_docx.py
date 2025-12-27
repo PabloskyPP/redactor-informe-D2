@@ -59,7 +59,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(12)
     
     doc.add_paragraph(PARRAFOS_FIJOS['descripcion_prueba'])
-    doc.add_paragraph()  # Espacio
     
     # ========================================================================
     # VARIABLES DEL TEST (Descripción técnica)
@@ -100,9 +99,8 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
-    # SALTO DE PÁGINA Y RESULTADOS
+    # INSERTAR GRÁFICO D2
     # ========================================================================
-    doc.add_page_break()
     
     # Título de resultados
     titulo_resultados = doc.add_paragraph()
@@ -111,58 +109,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio
-    
-    # Tabla con puntuaciones directas
-    tabla = doc.add_table(rows=3, cols=9)
-    tabla.style = 'Light Grid Accent 1'
-    
-    # Encabezados
-    headers = ['TR', 'TA', 'O', 'C', 'E', 'TOT', 'CON', 'VAR']
-    for i, header in enumerate(headers):
-        cell = tabla.rows[0].cells[i]
-        cell.text = header
-        cell.paragraphs[0].runs[0].bold = True
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    # Puntuaciones directas
-    valores = [
-        resultados['TR_total'],
-        resultados['TA_total'],
-        resultados['O_total'],
-        resultados['C_total'],
-        resultados['E_total'],
-        resultados['TOT'],
-        resultados['CON'],
-        resultados['VAR']
-    ]
-    for i, valor in enumerate(valores):
-        cell = tabla.rows[1].cells[i]
-        cell.text = str(valor)
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    # Clasificaciones (PT)
-    clasificaciones_texto = [
-        clasificaciones['TR'],
-        clasificaciones['TA'],
-        clasificaciones['O'],
-        clasificaciones['C'],
-        '-',
-        clasificaciones['TOT'],
-        clasificaciones['CON'],
-        clasificaciones['VAR']
-    ]
-    for i, clasif in enumerate(clasificaciones_texto):
-        cell = tabla.rows[2].cells[i]
-        cell.text = clasif
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    doc.add_paragraph()  # Espacio
-    doc.add_paragraph()  # Espacio
-    
-    # ========================================================================
-    # INSERTAR GRÁFICO D2
-    # ========================================================================
-    
+
     # Ruta al gráfico (en el mismo directorio que el script)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     grafico_path = os.path.join(script_dir, 'grafico_D2.png')
@@ -209,15 +156,68 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
             run_img.add_picture(grafico_path, width=Inches(7))
     
     doc.add_paragraph()  # Espacio
+
+    # ========================================================================
+    # SALTO DE PÁGINA Y RESULTADOS
+    # ========================================================================
+    doc.add_page_break()
     
-    # ========================================================================
-    # RESUMEN DEL RENDIMIENTO
-    # ========================================================================
     titulo_resumen = doc.add_paragraph()
     run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre=nombre_caso))
     run.bold = True
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio
+    
+    # Tabla con puntuaciones directas
+    tabla = doc.add_table(rows=3, cols=8)
+    tabla.style = 'Light Grid Accent 1'
+    
+    # Encabezados
+    headers = ['TR', 'TA', 'O', 'C', 'E', 'TOT', 'CON', 'VAR']
+    for i, header in enumerate(headers):
+        cell = tabla.rows[0].cells[i]
+        cell.text = header
+        cell.paragraphs[0].runs[0].bold = True
+        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    
+    # Puntuaciones directas
+    valores = [
+        resultados['TR_total'],
+        resultados['TA_total'],
+        resultados['O_total'],
+        resultados['C_total'],
+        resultados['E_total'],
+        resultados['TOT'],
+        resultados['CON'],
+        resultados['VAR']
+    ]
+    for i, valor in enumerate(valores):
+        cell = tabla.rows[1].cells[i]
+        cell.text = str(valor)
+        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    
+    # Clasificaciones (PT)
+    clasificaciones_texto = [
+        clasificaciones['TR'],
+        clasificaciones['TA'],
+        clasificaciones['O'],
+        clasificaciones['C'],
+        '-',
+        clasificaciones['TOT'],
+        clasificaciones['CON'],
+        clasificaciones['VAR']
+    ]
+    for i, clasif in enumerate(clasificaciones_texto):
+        cell = tabla.rows[2].cells[i]
+        cell.text = clasif
+        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    
+    doc.add_paragraph()  # Espacio
+    doc.add_paragraph()  # Espacio
+    
+    # ========================================================================
+    # RESUMEN DEL RENDIMIENTO
+    # ========================================================================
     
     # Párrafos fijos
     doc.add_paragraph(PARRAFOS_FIJOS['rendimiento_general'].format(nombre=nombre_caso))
@@ -239,8 +239,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         var_key = var_key + '_especial'
     
     doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre_caso))
-    doc.add_paragraph()  # Espacio
-    
+
     # VELOCIDAD DE PROCESAMIENTO
     p_tr_titulo = doc.add_paragraph()
     run = p_tr_titulo.add_run("🔹 Velocidad de procesamiento (TR)")
@@ -251,7 +250,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     tr_nivel = normalizar_nivel(clasificaciones['TR'])
     
     doc.add_paragraph(PARRAFOS_TR[tr_nivel])
-    doc.add_paragraph()  # Espacio
     
     # ERRORES DE OMISIÓN
     p_o_titulo = doc.add_paragraph()
@@ -263,7 +261,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     o_nivel = normalizar_nivel(clasificaciones['O'])
     
     doc.add_paragraph(PARRAFOS_O[o_nivel])
-    doc.add_paragraph()  # Espacio
     
     # ERRORES DE COMISIÓN
     p_c_titulo = doc.add_paragraph()
@@ -275,7 +272,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     c_nivel = normalizar_nivel(clasificaciones['C'])
     
     doc.add_paragraph(PARRAFOS_C[c_nivel])
-    doc.add_paragraph()  # Espacio
     
     # CONCENTRACIÓN
     p_con_titulo = doc.add_paragraph()
@@ -298,7 +294,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(11)
     
     doc.add_paragraph(SINTESIS_INTRO.format(nombre=nombre_caso))
-    doc.add_paragraph()  # Espacio
     
     # Párrafo de cierre según combinación de clasificaciones
     parrafo_cierre = obtener_parrafo_cierre(
