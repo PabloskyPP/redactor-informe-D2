@@ -63,8 +63,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # ========================================================================
     # VARIABLES DEL TEST (Descripción técnica)
     # ========================================================================
-    doc.add_paragraph("A continuación, se presenta una relación de las puntuaciones o variables de la prueba; se especifica cómo se obtienen y se dan algunas características de su significación psicológica y psicométrica.")
-    doc.add_paragraph()
+    doc.add_paragraph("A continuación, se presenta una relación de las puntuaciones o variables de la prueba; se especifica cómo se obtienen y se dan algunas características de su significación psicológica y psicométrica:")
     
     # TR
     p_tr = doc.add_paragraph()
