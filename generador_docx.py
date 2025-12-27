@@ -11,6 +11,60 @@ from textos import (
     SINTESIS_INTRO, obtener_parrafo_cierre, normalizar_nivel
 )
 
+def agregar_portada(doc: Document, nombre: str, datos: dict) -> None:
+    
+
+    # Agrega la portada del informe
+    # Título - CAMBIO 1: Tamaño aumentado
+    titulo = doc.add_heading('D2, TEST DE ATENCIÓN', 0)
+    titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    # Aumentar tamaño de fuente del título
+    for run in titulo.runs:
+        run.font.size = Pt(24)  # Tamaño aumentado
+    
+    # Espacio
+    doc.add_paragraph().add_run().add_break()
+    
+    # Información del participante - CAMBIO 1: "Nombre del encuestado" y sin "Sexo"
+    info = doc.add_paragraph()
+    info.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # CAMBIO 1: Cambiar "Nombre:" por "Nombre del encuestado:"
+    nombre_run = info.add_run(f"Nombre del encuestado: {datos.get('nombre', nombre)}\n")
+    nombre_run.bold = True
+    nombre_run.font.size = Pt(16)  # Aumentar tamaño
+    
+    # CAMBIO 1: ELIMINAR la línea de "Sexo"
+    # Ya no se incluye: info.add_run(f"Sexo: {datos.get('sexo', 'No especificado')}\n")
+    
+    if datos.get('edad'):
+        edad_run = info.add_run(f"Edad: {datos['edad']} años\n")
+        edad_run.font.size = Pt(14)  # Aumentar tamaño
+    
+    if datos.get('fecha_aplicacion'):
+        fecha_app_run = info.add_run(f"Fecha de aplicación: {datos['fecha_aplicacion']}\n")
+        fecha_app_run.font.size = Pt(14)  # Aumentar tamaño
+    
+    from datetime import datetime
+    fecha_actual = datetime.now().strftime("%d/%m/%Y")
+    fecha_informe_run = info.add_run(f"Fecha del informe: {fecha_actual}\n")
+    fecha_informe_run.font.size = Pt(14)  # Aumentar tamaño
+    
+    # Espacio
+    doc.add_paragraph().add_run().add_break()
+    
+    # Nota confidencial
+    nota = doc.add_paragraph()
+    nota.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    nota_run = nota.add_run("Informe confidencial - Uso profesional y educativo")
+    nota_run.italic = True
+    nota_run.font.size = Pt(12)
+
+    # ========================================================================
+    # INTRODUCCIÓN
+    # ========================================================================
+    doc.add_paragraph(PARRAFOS_FIJOS['introduccion'].format(nombre=nombre_caso))
+    doc.add_paragraph()  # Espacio
 
 def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     """
@@ -34,20 +88,15 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         section.left_margin = Inches(1)
         section.right_margin = Inches(1)
     
-    # ========================================================================
-    # TÍTULO
+    # 1. PORTADA 
+    agregar_portada(doc, nombre_participante, datos)
+    doc.add_page_break()
     # ========================================================================
     titulo = doc.add_paragraph()
     titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     run = titulo.add_run(PARRAFOS_FIJOS['titulo'])
     run.bold = True
     run.font.size = Pt(16)
-    doc.add_paragraph()  # Espacio
-    
-    # ========================================================================
-    # INTRODUCCIÓN
-    # ========================================================================
-    doc.add_paragraph(PARRAFOS_FIJOS['introduccion'].format(nombre=nombre_caso))
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
