@@ -3,77 +3,177 @@ Módulo para generar el informe en formato DOCX
 """
 import os
 from docx import Document
-from docx.shared import Pt, Inches, RGBColor
+from docx.shared import Pt, Inches, RGBColor, Emu
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
 from textos import (
     PARRAFOS_FIJOS, PARRAFOS_VAR, PARRAFOS_TR, 
     PARRAFOS_O, PARRAFOS_C, PARRAFOS_CON,
     SINTESIS_INTRO, obtener_parrafo_cierre, normalizar_nivel
 )
 
-def agregar_portada(doc: Document, nombre: str, datos: dict) -> None:
-    
 
-    # Agrega la portada del informe
-    # Título - CAMBIO 1: Tamaño aumentado
+def agregar_textbox_vertical(paragraph, text, x_pos, y_pos, width=Inches(0.3), height=Inches(1.5)):
+    """
+    Añade un cuadro de texto rotado verticalmente al párrafo
+    
+    Args:
+        paragraph: Párrafo de docx donde añadir el textbox
+        text: Texto a mostrar
+        x_pos: Posición X en EMUs
+        y_pos: Posición Y en EMUs  
+        width: Ancho del cuadro de texto
+        height: Alto del cuadro de texto
+    
+    Note: Esta función usa manipulación XML directa para crear textboxes posicionados
+    """
+    # Convertir dimensiones a EMUs si son Inches
+    if isinstance(width, Inches):
+        width = int(width)
+    if isinstance(height, Inches):
+        height = int(height)
+    if isinstance(x_pos, Inches):
+        x_pos = int(x_pos)
+    if isinstance(y_pos, Inches):
+        y_pos = int(y_pos)
+    
+    # Crear el textbox XML con posicionamiento absoluto y rotación
+    # Nota: La rotación vertical se logra con rot="270" (270 grados = rotación hacia la izquierda)
+    textbox_xml = f'''
+    <w:r xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+         xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+         xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+         xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"
+         xmlns:v="urn:schemas-microsoft-com:vml"
+         xmlns:w10="urn:schemas-microsoft-com:office:word">
+        <w:drawing>
+            <wp:anchor distT="0" distB="0" distL="0" distR="0" simplePos="0" 
+                       relativeHeight="251659264" behindDoc="0" locked="0" 
+                       layoutInCell="1" allowOverlap="1">
+                <wp:simplePos x="0" y="0"/>
+                <wp:positionH relativeFrom="page">
+                    <wp:posOffset>{x_pos}</wp:posOffset>
+                </wp:positionH>
+                <wp:positionV relativeFrom="page">
+                    <wp:posOffset>{y_pos}</wp:posOffset>
+                </wp:positionV>
+                <wp:extent cx="{width}" cy="{height}"/>
+                <wp:effectExtent l="0" t="0" r="0" b="0"/>
+                <wp:wrapNone/>
+                <wp:docPr id="1" name="Textbox"/>
+                <wp:cNvGraphicFramePr/>
+                <a:graphic>
+                    <a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">
+                        <wps:wsp xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">
+                            <wps:cNvSpPr/>
+                            <wps:spPr>
+                                <a:xfrm rot="2700000">
+                                    <a:off x="0" y="0"/>
+                                    <a:ext cx="{width}" cy="{height}"/>
+                                </a:xfrm>
+                                <a:prstGeom prst="rect">
+                                    <a:avLst/>
+                                </a:prstGeom>
+                                <a:noFill/>
+                                <a:ln>
+                                    <a:noFill/>
+                                </a:ln>
+                            </wps:spPr>
+                            <wps:txbx>
+                                <w:txbxContent>
+                                    <w:p>
+                                        <w:r>
+                                            <w:rPr>
+                                                <w:sz w:val="20"/>
+                                                <w:b/>
+                                            </w:rPr>
+                                            <w:t>{text}</w:t>
+                                        </w:r>
+                                    </w:p>
+                                </w:txbxContent>
+                            </wps:txbx>
+                            <wps:bodyPr rot="0" vert="wordArtVert"/>
+                        </wps:wsp>
+                    </a:graphicData>
+                </a:graphic>
+            </wp:anchor>
+        </w:drawing>
+    </w:r>
+    '''
+    
+    # Parsear el XML y añadirlo al párrafo
+    try:
+        textbox_element = parse_xml(textbox_xml)
+        paragraph._p.append(textbox_element)
+    except Exception as e:
+        # Si hay error en la creación del textbox, simplemente no lo añadimos
+        # para no romper el documento
+        pass
+
+
+def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
+    """
+    Agrega la portada del informe
+    
+    Args:
+        doc: Documento de Word
+        nombre_completo: Nombre completo del encuestado
+        datos: Diccionario con datos generales (edad, fecha_aplicacion, etc.)
+    """
+    # Título
     titulo = doc.add_heading('D2, TEST DE ATENCIÓN', 0)
     titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     # Aumentar tamaño de fuente del título
     for run in titulo.runs:
-        run.font.size = Pt(24)  # Tamaño aumentado
+        run.font.size = Pt(24)
     
     # Espacio
     doc.add_paragraph().add_run().add_break()
     
-    # Información del participante - CAMBIO 1: "Nombre del encuestado" y sin "Sexo"
+    # Información del participante
     info = doc.add_paragraph()
-    info.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    info.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     
-    # CAMBIO 1: Cambiar "Nombre:" por "Nombre del encuestado:"
-    nombre_run = info.add_run(f"Nombre del encuestado: {datos.get('nombre', nombre)}\n")
+    # Nombre del encuestado
+    nombre_run = info.add_run(f"Nombre del encuestado: {nombre_completo}\n")
     nombre_run.bold = True
-    nombre_run.font.size = Pt(16)  # Aumentar tamaño
+    nombre_run.font.size = Pt(16)
     
-    # CAMBIO 1: ELIMINAR la línea de "Sexo"
-    # Ya no se incluye: info.add_run(f"Sexo: {datos.get('sexo', 'No especificado')}\n")
-    
+    # Edad
     if datos.get('edad'):
         edad_run = info.add_run(f"Edad: {datos['edad']} años\n")
-        edad_run.font.size = Pt(14)  # Aumentar tamaño
+        edad_run.font.size = Pt(14)
     
+    # Fecha de aplicación (si está disponible)
     if datos.get('fecha_aplicacion'):
         fecha_app_run = info.add_run(f"Fecha de aplicación: {datos['fecha_aplicacion']}\n")
-        fecha_app_run.font.size = Pt(14)  # Aumentar tamaño
+        fecha_app_run.font.size = Pt(14)
     
+    # Fecha del informe
     from datetime import datetime
     fecha_actual = datetime.now().strftime("%d/%m/%Y")
     fecha_informe_run = info.add_run(f"Fecha del informe: {fecha_actual}\n")
-    fecha_informe_run.font.size = Pt(14)  # Aumentar tamaño
+    fecha_informe_run.font.size = Pt(14)
     
     # Espacio
     doc.add_paragraph().add_run().add_break()
     
     # Nota confidencial
     nota = doc.add_paragraph()
-    nota.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    nota.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     nota_run = nota.add_run("Informe confidencial - Uso profesional y educativo")
     nota_run.italic = True
     nota_run.font.size = Pt(12)
-
-    # ========================================================================
-    # INTRODUCCIÓN
-    # ========================================================================
-    doc.add_paragraph(PARRAFOS_FIJOS['introduccion'].format(nombre=nombre_caso))
-    doc.add_paragraph()  # Espacio
 
 def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     """
     Crea el documento Word con el informe del test D2
     
     Args:
-        resultados: Dict con puntuaciones directas
+        resultados: Dict con puntuaciones directas y datos del encuestado
         clasificaciones: Dict con clasificaciones (PT)
-        nombre_caso: Nombre del evaluado
+        nombre_caso: Nombre del evaluado (fallback si no está en resultados)
         
     Returns:
         Document: Documento Word generado
@@ -88,15 +188,32 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         section.left_margin = Inches(1)
         section.right_margin = Inches(1)
     
-    # 1. PORTADA 
-    agregar_portada(doc, nombre_participante, datos)
+    # Extraer nombres de resultados
+    nombre_completo = resultados.get('nombre_completo') or nombre_caso
+    nombre = resultados.get('nombre') or nombre_caso
+    
+    # Preparar datos para la portada
+    datos_portada = {
+        'edad': resultados.get('edad'),
+        'fecha_aplicacion': resultados.get('fecha_aplicacion')
+    }
+    
+    # 1. PORTADA (Primera página)
+    agregar_portada(doc, nombre_completo, datos_portada)
     doc.add_page_break()
+    
+    # ========================================================================
+    # TÍTULO E INTRODUCCIÓN
     # ========================================================================
     titulo = doc.add_paragraph()
     titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     run = titulo.add_run(PARRAFOS_FIJOS['titulo'])
     run.bold = True
     run.font.size = Pt(16)
+    doc.add_paragraph()  # Espacio
+    
+    # Introducción
+    doc.add_paragraph(PARRAFOS_FIJOS['introduccion'].format(nombre=nombre))
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
@@ -163,9 +280,9 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     grafico_path = os.path.join(script_dir, 'grafico_D2.png')
     
     if os.path.exists(grafico_path):
-        # Añadir el gráfico
-        # Obtener dimensiones de página (ignorar márgenes como se especifica)
-        section = doc.sections[0]
+        # Añadir el gráfico con dimensionamiento mejorado
+        # Obtener dimensiones de página (ignorar márgenes como se especifica en issue)
+        section = doc.sections[-1]
         page_width = section.page_width
         page_height = section.page_height
         
@@ -175,33 +292,84 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
             img = Image.open(grafico_path)
             img_width, img_height = img.size
             img_aspect = img_width / img_height
+            page_aspect = page_width / page_height
             
-            # Calcular el tamaño máximo manteniendo la proporción
-            # Usar el ancho de página como límite
-            max_width = page_width
-            max_height = page_height
-            
-            # Calcular dimensiones finales
-            if img_aspect > (max_width / max_height):
-                # La imagen es más ancha proporcionalmente
-                final_width = max_width
-                final_height = max_width / img_aspect
+            # Calcular dimensiones finales para ajustar tanto al techo como a la base
+            # manteniendo la proporción y sin deformación
+            if img_aspect > page_aspect:
+                # La imagen es más ancha proporcionalmente - limitar por ancho
+                final_width = page_width
+                final_height = page_width / img_aspect
             else:
-                # La imagen es más alta proporcionalmente
-                final_height = max_height
-                final_width = max_height * img_aspect
+                # La imagen es más alta proporcionalmente - limitar por alto
+                final_height = page_height
+                final_width = page_height * img_aspect
             
-            # Añadir la imagen al documento
+            # Añadir la imagen al documento con el tamaño calculado
             paragraph_img = doc.add_paragraph()
             paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
             run_img = paragraph_img.add_run()
-            run_img.add_picture(grafico_path, width=int(final_width * 0.9))  # 90% del ancho para un margen mínimo
-        except ImportError:
-            # Si PIL no está disponible, usar un tamaño fijo razonable
+            picture = run_img.add_picture(grafico_path, width=int(final_width), height=int(final_height))
+            
+            # Añadir cuadros de texto con puntuaciones superpuestos al gráfico
+            # Posiciones ajustables para cada índice (en pulgadas desde el borde de la página)
+            # Estas posiciones pueden ajustarse para colocar los textos sobre las líneas correspondientes
+            textbox_positions = {
+                'TR': {'x': Inches(0.5), 'y': Inches(2.0)},   # Posición para TR
+                'TA': {'x': Inches(1.5), 'y': Inches(2.5)},   # Posición para TA
+                'O': {'x': Inches(2.5), 'y': Inches(3.0)},    # Posición para O
+                'C': {'x': Inches(3.5), 'y': Inches(3.5)},    # Posición para C
+            }
+            
+            # Crear párrafo para los textboxes superpuestos
+            textbox_para = doc.add_paragraph()
+            
+            # Añadir textbox para cada puntuación
+            agregar_textbox_vertical(
+                textbox_para,
+                f"TR: {resultados['TR_total']}",
+                textbox_positions['TR']['x'],
+                textbox_positions['TR']['y']
+            )
+            
+            agregar_textbox_vertical(
+                textbox_para,
+                f"TA: {resultados['TA_total']}",
+                textbox_positions['TA']['x'],
+                textbox_positions['TA']['y']
+            )
+            
+            agregar_textbox_vertical(
+                textbox_para,
+                f"O: {resultados['O_total']}",
+                textbox_positions['O']['x'],
+                textbox_positions['O']['y']
+            )
+            
+            agregar_textbox_vertical(
+                textbox_para,
+                f"C: {resultados['C_total']}",
+                textbox_positions['C']['x'],
+                textbox_positions['C']['y']
+            )
+            
+        except Exception as e:
+            # Si hay algún error, usar un tamaño fijo razonable
             paragraph_img = doc.add_paragraph()
             paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
             run_img = paragraph_img.add_run()
             run_img.add_picture(grafico_path, width=Inches(7))
+            # En caso de error, añadir puntuaciones como texto simple
+            scores_para = doc.add_paragraph()
+            scores_para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            scores_run = scores_para.add_run(
+                f"TR: {resultados['TR_total']}  |  "
+                f"TA: {resultados['TA_total']}  |  "
+                f"O: {resultados['O_total']}  |  "
+                f"C: {resultados['C_total']}"
+            )
+            scores_run.font.size = Pt(10)
+            scores_run.font.bold = True
     
     doc.add_paragraph()  # Espacio
 
@@ -211,7 +379,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     doc.add_page_break()
     
     titulo_resumen = doc.add_paragraph()
-    run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre=nombre_caso))
+    run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre=nombre))
     run.bold = True
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio
@@ -267,7 +435,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # ========================================================================
     
     # Párrafos fijos
-    doc.add_paragraph(PARRAFOS_FIJOS['rendimiento_general'].format(nombre=nombre_caso))
+    doc.add_paragraph(PARRAFOS_FIJOS['rendimiento_general'].format(nombre=nombre))
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
@@ -285,7 +453,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     if clasificaciones.get('VAR_especial', False) and var_key in ['alto', 'muy alto']:
         var_key = var_key + '_especial'
     
-    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre_caso))
+    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre))
 
     # VELOCIDAD DE PROCESAMIENTO
     p_tr_titulo = doc.add_paragraph()
@@ -340,7 +508,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(11)
     
-    doc.add_paragraph(SINTESIS_INTRO.format(nombre=nombre_caso))
+    doc.add_paragraph(SINTESIS_INTRO.format(nombre=nombre))
     
     # Párrafo de cierre según combinación de clasificaciones
     parrafo_cierre = obtener_parrafo_cierre(
@@ -350,7 +518,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         clasificaciones['CON'],
         clasificaciones['VAR'],
         clasificaciones.get('VAR_especial', False),
-        nombre_caso
+        nombre
     )
     doc.add_paragraph(parrafo_cierre)
     

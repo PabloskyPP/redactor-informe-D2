@@ -12,18 +12,33 @@ def leer_datos_excel(ruta_archivo):
         ruta_archivo: Ruta al archivo Excel
         
     Returns:
-        dict: Diccionario con 'edad' y 'datos_d2' (DataFrame de la hoja D2)
+        dict: Diccionario con 'edad', 'sub_num', 'nombre_completo', 'nombre' y 'datos_d2'
     """
     try:
-        # Leer hoja 'info' para obtener la edad
+        # Leer hoja 'info' para obtener la edad y sub_num
         df_info = pd.read_excel(ruta_archivo, sheet_name='info')
         edad = df_info['age'].iloc[0] if 'age' in df_info.columns else None
+        
+        # Extraer sub_num y procesarlo
+        sub_num = df_info['sub_num'].iloc[0] if 'sub_num' in df_info.columns else None
+        
+        # Procesar nombre completo y nombre (primer token)
+        if sub_num:
+            nombre_completo = str(sub_num).strip()
+            # Obtener solo el primer token (antes del primer espacio)
+            nombre = nombre_completo.split()[0] if nombre_completo else nombre_completo
+        else:
+            nombre_completo = None
+            nombre = None
         
         # Leer hoja 'D2' con los datos del test
         df_d2 = pd.read_excel(ruta_archivo, sheet_name='D2')
         
         return {
             'edad': edad,
+            'sub_num': sub_num,
+            'nombre_completo': nombre_completo,
+            'nombre': nombre,
             'datos_d2': df_d2
         }
     except Exception as e:
@@ -49,6 +64,9 @@ def calcular_puntuaciones_directas(datos):
     
     resultados = {
         'edad': datos['edad'],
+        'sub_num': datos.get('sub_num'),
+        'nombre_completo': datos.get('nombre_completo'),
+        'nombre': datos.get('nombre'),
         'TR_por_fila': [],
         'TA_por_fila': [],
         'O_por_fila': [],
