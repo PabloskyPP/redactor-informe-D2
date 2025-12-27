@@ -8,7 +8,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from textos import (
     PARRAFOS_FIJOS, PARRAFOS_VAR, PARRAFOS_TR, 
     PARRAFOS_O, PARRAFOS_C, PARRAFOS_CON,
-    SINTESIS_INTRO, obtener_parrafo_cierre
+    SINTESIS_INTRO, obtener_parrafo_cierre, normalizar_nivel
 )
 
 
@@ -248,11 +248,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(11)
     
     # Normalizar nivel para selección de párrafo
-    tr_nivel = clasificaciones['TR']
-    if tr_nivel == 'muy bajo':
-        tr_nivel = 'bajo'
-    elif tr_nivel == 'muy alto':
-        tr_nivel = 'alto'
+    tr_nivel = normalizar_nivel(clasificaciones['TR'])
     
     doc.add_paragraph(PARRAFOS_TR[tr_nivel])
     doc.add_paragraph()  # Espacio
@@ -264,11 +260,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(11)
     
     # Normalizar nivel para selección de párrafo
-    o_nivel = clasificaciones['O']
-    if o_nivel == 'muy bajo':
-        o_nivel = 'bajo'
-    elif o_nivel == 'muy alto':
-        o_nivel = 'alto'
+    o_nivel = normalizar_nivel(clasificaciones['O'])
     
     doc.add_paragraph(PARRAFOS_O[o_nivel])
     doc.add_paragraph()  # Espacio
@@ -280,11 +272,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(11)
     
     # Normalizar nivel para selección de párrafo
-    c_nivel = clasificaciones['C']
-    if c_nivel == 'muy bajo':
-        c_nivel = 'bajo'
-    elif c_nivel == 'muy alto':
-        c_nivel = 'alto'
+    c_nivel = normalizar_nivel(clasificaciones['C'])
     
     doc.add_paragraph(PARRAFOS_C[c_nivel])
     doc.add_paragraph()  # Espacio
@@ -296,11 +284,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(11)
     
     # Normalizar nivel para selección de párrafo
-    con_nivel = clasificaciones['CON']
-    if con_nivel == 'muy bajo':
-        con_nivel = 'bajo'
-    elif con_nivel == 'muy alto':
-        con_nivel = 'alto'
+    con_nivel = normalizar_nivel(clasificaciones['CON'])
     
     doc.add_paragraph(PARRAFOS_CON[con_nivel])
     doc.add_paragraph()  # Espacio
