@@ -36,7 +36,9 @@ PARRAFOS_VAR = {
     
     'normal': """El índice de variación se sitúa dentro de valores esperables, lo que indica una ejecución relativamente estable y consistente a lo largo de la prueba, sin fluctuaciones marcadas en el ritmo de trabajo.""",
     
-    'bajo': """El bajo nivel de variabilidad observado sugiere una alta consistencia y estabilidad en el rendimiento, indicando una buena capacidad para sostener el esfuerzo atencional de forma uniforme durante toda la tarea."""
+    'bajo': """El bajo nivel de variabilidad observado sugiere una alta consistencia y estabilidad en el rendimiento, indicando una buena capacidad para sostener el esfuerzo atencional de forma uniforme durante toda la tarea.""",
+    
+    'muy bajo': """El bajo nivel de variabilidad observado sugiere una alta consistencia y estabilidad en el rendimiento, indicando una buena capacidad para sostener el esfuerzo atencional de forma uniforme durante toda la tarea."""
 }
 
 # TR - Velocidad de procesamiento
