@@ -1,6 +1,7 @@
 """
 Módulo para generar el informe en formato DOCX
 """
+import os
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -161,8 +162,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # ========================================================================
     # INSERTAR GRÁFICO D2
     # ========================================================================
-    import os
-    from docx.shared import Inches
     
     # Ruta al gráfico (en el mismo directorio que el script)
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -248,7 +247,14 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(11)
     
-    doc.add_paragraph(PARRAFOS_TR[clasificaciones['TR']])
+    # Normalizar nivel para selección de párrafo
+    tr_nivel = clasificaciones['TR']
+    if tr_nivel == 'muy bajo':
+        tr_nivel = 'bajo'
+    elif tr_nivel == 'muy alto':
+        tr_nivel = 'alto'
+    
+    doc.add_paragraph(PARRAFOS_TR[tr_nivel])
     doc.add_paragraph()  # Espacio
     
     # ERRORES DE OMISIÓN
@@ -257,7 +263,14 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(11)
     
-    doc.add_paragraph(PARRAFOS_O[clasificaciones['O']])
+    # Normalizar nivel para selección de párrafo
+    o_nivel = clasificaciones['O']
+    if o_nivel == 'muy bajo':
+        o_nivel = 'bajo'
+    elif o_nivel == 'muy alto':
+        o_nivel = 'alto'
+    
+    doc.add_paragraph(PARRAFOS_O[o_nivel])
     doc.add_paragraph()  # Espacio
     
     # ERRORES DE COMISIÓN
@@ -266,7 +279,14 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(11)
     
-    doc.add_paragraph(PARRAFOS_C[clasificaciones['C']])
+    # Normalizar nivel para selección de párrafo
+    c_nivel = clasificaciones['C']
+    if c_nivel == 'muy bajo':
+        c_nivel = 'bajo'
+    elif c_nivel == 'muy alto':
+        c_nivel = 'alto'
+    
+    doc.add_paragraph(PARRAFOS_C[c_nivel])
     doc.add_paragraph()  # Espacio
     
     # CONCENTRACIÓN
@@ -275,7 +295,14 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.bold = True
     run.font.size = Pt(11)
     
-    doc.add_paragraph(PARRAFOS_CON[clasificaciones['CON']])
+    # Normalizar nivel para selección de párrafo
+    con_nivel = clasificaciones['CON']
+    if con_nivel == 'muy bajo':
+        con_nivel = 'bajo'
+    elif con_nivel == 'muy alto':
+        con_nivel = 'alto'
+    
+    doc.add_paragraph(PARRAFOS_CON[con_nivel])
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
