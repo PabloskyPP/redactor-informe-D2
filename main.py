@@ -2,9 +2,11 @@
 Programa principal para generar informe del test D2
 """
 import sys
+import os
 from lector_datos import leer_datos_excel, calcular_puntuaciones_directas
 from reglas_psicometricas import obtener_puntuaciones_tipicas
 from generador_docx import crear_informe_docx, guardar_informe
+from generador_imagen_final import generar_imagen_final
 
 
 def main():
@@ -56,8 +58,27 @@ def main():
     
     print()
     
-    # Paso 3: Obtener puntuaciones típicas (clasificaciones)
-    print("Paso 3: Obteniendo puntuaciones típicas (baremos)...")
+    # Paso 3: Generar imagen final grafico_D2_final.png
+    print("Paso 3: Generando imagen final con superposiciones...")
+    try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        ruta_base = os.path.join(script_dir, 'grafico_D2.png')
+        ruta_final = os.path.join(script_dir, 'grafico_D2_final.png')
+        
+        exito = generar_imagen_final(resultados, resultados['datos_d2'], ruta_base, ruta_final)
+        if exito:
+            print(f"    Imagen final generada correctamente: grafico_D2_final.png")
+        else:
+            print(f"   X Error al generar la imagen final")
+            sys.exit(1)
+    except Exception as e:
+        print(f"   X Error al generar la imagen final: {e}")
+        sys.exit(1)
+    
+    print()
+    
+    # Paso 4: Obtener puntuaciones típicas (clasificaciones)
+    print("Paso 4: Obteniendo puntuaciones típicas (baremos)...")
     try:
         clasificaciones = obtener_puntuaciones_tipicas(resultados)
         print(f"    TR: {clasificaciones['TR']}")
@@ -71,8 +92,8 @@ def main():
     
     print()
     
-    # Paso 4: Generar informe DOCX
-    print("Paso 4: Generando informe en formato Word...")
+    # Paso 5: Generar informe DOCX
+    print("Paso 5: Generando informe en formato Word...")
     try:
         documento = crear_informe_docx(resultados, clasificaciones, NOMBRE_CASO)
         print(f"    Documento generado correctamente")
@@ -82,8 +103,8 @@ def main():
     
     print()
     
-    # Paso 5: Guardar el informe
-    print("Paso 5: Guardando informe...")
+    # Paso 6: Guardar el informe
+    print("Paso 6: Guardando informe...")
     try:
         guardar_informe(documento, RUTA_SALIDA)
         print(f"    Informe guardado en: {RUTA_SALIDA}")

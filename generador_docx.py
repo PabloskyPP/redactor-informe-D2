@@ -267,9 +267,10 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio
 
-    # Ruta al gráfico (en el mismo directorio que el script)
+    # Ruta al gráfico final (en el mismo directorio que el script)
+    # Ahora usamos grafico_D2_final.png que incluye todas las superposiciones
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    grafico_path = os.path.join(script_dir, 'grafico_D2.png')
+    grafico_path = os.path.join(script_dir, 'grafico_D2_final.png')
     
     if os.path.exists(grafico_path):
         # Añadir el gráfico con dimensionamiento mejorado
@@ -302,65 +303,12 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
             run_img = paragraph_img.add_run()
             picture = run_img.add_picture(grafico_path, width=int(final_width), height=int(final_height))
             
-            # Añadir cuadros de texto con puntuaciones superpuestos al gráfico
-            # Posiciones ajustables para cada índice (en pulgadas desde el borde de la página)
-            # Estas posiciones pueden ajustarse para colocar los textos sobre las líneas correspondientes
-            textbox_positions = {
-                'TR': {'x': Inches(0.5), 'y': Inches(2.0)},   # Posición para TR
-                'TA': {'x': Inches(1.5), 'y': Inches(2.5)},   # Posición para TA
-                'O': {'x': Inches(2.5), 'y': Inches(3.0)},    # Posición para O
-                'C': {'x': Inches(3.5), 'y': Inches(3.5)},    # Posición para C
-            }
-            
-            # Crear párrafo para los textboxes superpuestos
-            textbox_para = doc.add_paragraph()
-            
-            # Añadir textbox para cada puntuación
-            agregar_textbox_vertical(
-                textbox_para,
-                f"TR: {resultados['TR_total']}",
-                textbox_positions['TR']['x'],
-                textbox_positions['TR']['y']
-            )
-            
-            agregar_textbox_vertical(
-                textbox_para,
-                f"TA: {resultados['TA_total']}",
-                textbox_positions['TA']['x'],
-                textbox_positions['TA']['y']
-            )
-            
-            agregar_textbox_vertical(
-                textbox_para,
-                f"O: {resultados['O_total']}",
-                textbox_positions['O']['x'],
-                textbox_positions['O']['y']
-            )
-            
-            agregar_textbox_vertical(
-                textbox_para,
-                f"C: {resultados['C_total']}",
-                textbox_positions['C']['x'],
-                textbox_positions['C']['y']
-            )
-            
         except Exception as e:
             # Si hay algún error, usar un tamaño fijo razonable
             paragraph_img = doc.add_paragraph()
             paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
             run_img = paragraph_img.add_run()
             run_img.add_picture(grafico_path, width=Inches(7))
-            # En caso de error, añadir puntuaciones como texto simple
-            scores_para = doc.add_paragraph()
-            scores_para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            scores_run = scores_para.add_run(
-                f"TR: {resultados['TR_total']}  |  "
-                f"TA: {resultados['TA_total']}  |  "
-                f"O: {resultados['O_total']}  |  "
-                f"C: {resultados['C_total']}"
-            )
-            scores_run.font.size = Pt(10)
-            scores_run.font.bold = True
     
     doc.add_paragraph()  # Espacio
 

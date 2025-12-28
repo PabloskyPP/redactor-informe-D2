@@ -74,6 +74,7 @@ def calcular_puntuaciones_directas(datos):
         'sub_num': datos.get('sub_num'),
         'nombre_completo': datos.get('nombre_completo'),
         'nombre': datos.get('nombre'),
+        'datos_d2': df,  # Incluir DataFrame para generador_imagen_final
         'TR_por_fila': [],
         'TA_por_fila': [],
         'O_por_fila': [],

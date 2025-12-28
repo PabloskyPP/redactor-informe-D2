@@ -40,3 +40,7 @@ Thumbs.db
 *.xlsx
 *.docx
 !grafico_D2.png
+
+# Generated images
+grafico_D2_final.png
+grafico_D2_final_example.png
