@@ -53,6 +53,10 @@ COLOR_PUNTO = (0, 0, 0, 255)  # Color negro para los puntos
 GROSOR_LINEA = 2  # Grosor de las líneas conectoras en píxeles
 COLOR_LINEA = (0, 0, 0, 255)  # Color negro para las líneas
 
+# Configuración de rotaciones (en grados, siguiendo convención PIL)
+ROTACION_TEXTO_VERTICAL = 90  # Rotación antihoraria para texto vertical
+ROTACION_IMAGEN_FINAL = -90  # Rotación horaria de la imagen final antes de guardar
+
 
 # ============================================================================
 # FUNCIONES DE MAPEO DE COORDENADAS
@@ -201,9 +205,13 @@ def dibujar_textos_rotados_totales(draw, resultados, img_width, img_height):
         txt_draw = ImageDraw.Draw(txt_img)  # Objeto de dibujo para la imagen temporal
         txt_draw.text((5, 5), texto, font=fuente, fill=(0, 0, 0, 255))  # Dibujar el texto en la imagen temporal
 
+        # Rotar la imagen 90 grados antihorario para texto vertical
+        # (PIL: valores positivos = rotación antihoraria, valores negativos = horaria)
+        txt_img_rotated = txt_img.rotate(ROTACION_TEXTO_VERTICAL, expand=True)
+
         # Pegar la imagen rotada en la imagen principal
-        # Usar la imagen original como máscara para transparencia
-        draw._image.paste((x, y))  # Pegar el texto rotado en la posición calculada
+        # Usar la imagen rotada como máscara para transparencia
+        draw._image.paste(txt_img_rotated, (x, y), txt_img_rotated)  # Pegar el texto rotado en la posición calculada
 
 def dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height):
     """
@@ -356,7 +364,11 @@ def generar_imagen_final(resultados, datos_d2, ruta_grafico_base='grafico_D2.png
         # 6. Conectar puntos entre filas
         conectar_puntos_entre_filas(draw, puntos_por_fila)
 
-        # 7. Guardar imagen final
+        # 7. Rotar imagen 90 grados en sentido horario antes de guardar
+        # (PIL: valores negativos = rotación horaria, valores positivos = antihoraria)
+        img = img.rotate(ROTACION_IMAGEN_FINAL, expand=True)
+
+        # 8. Guardar imagen final
         img.save(ruta_salida, 'PNG')  # Guardar la imagen generada
 
         print(f" Imagen final generada exitosamente: {ruta_salida}")
