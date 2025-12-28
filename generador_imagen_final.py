@@ -4,8 +4,10 @@ Módulo para generar la imagen final grafico_D2_final.png con superposiciones gr
 Este módulo toma como base grafico_D2.png y genera una versión final con:
 - Textos rotados de puntuaciones globales (TR_total, TA_total, O_total, C_total)
 - Cuadros de texto por fila para cada índice (TR, TA, O, C)
-- Puntos negros en posiciones donde selected != FALSO
+- Puntos negros en posiciones donde selected != 'FALSE' (items seleccionados)
 - Líneas conectando últimos puntos de filas consecutivas
+
+Nota: El Excel usa el valor 'FALSE' en inglés, no 'FALSO'
 """
 
 import os
@@ -242,7 +244,10 @@ def dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height):
 
 def dibujar_puntos_seleccionados(draw, datos_d2, img_width, img_height):
     """
-    Dibuja puntos negros en las posiciones donde selected != FALSO
+    Dibuja puntos negros en las posiciones donde selected != 'FALSE'
+    
+    Nota: El Excel usa 'FALSE' (inglés) para items no seleccionados.
+    Esta función dibuja puntos para todos los items donde selected != 'FALSE'.
     
     Args:
         draw: Objeto ImageDraw
