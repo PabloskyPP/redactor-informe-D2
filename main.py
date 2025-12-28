@@ -14,9 +14,12 @@ def main():
     Función principal que ejecuta todo el proceso
     """
     # Configuración
-    RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\2312_21312.xlsx"
+    RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\pablo prada_1.xlsx"
+    script_dir = os.path.dirname(RUTA_EXCEL)
+    RUTA_SALIDA = os.path.join(script_dir, "Informe_D2_Resultado.docx")
+    RUTA_IMAGEN_FINAL = os.path.join(script_dir, "grafico_D2_final.png")
     RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
-    NOMBRE_CASO = "caso"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
+    NOMBRE_CASO = "pablo"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
     print("GENERADOR DE INFORME TEST D2 - ATENCIÓN")

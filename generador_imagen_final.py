@@ -364,11 +364,11 @@ def generar_imagen_final(resultados, datos_d2, ruta_grafico_base='grafico_D2.png
         # 7. Guardar imagen final
         img.save(ruta_salida, 'PNG')
         
-        print(f"✅ Imagen final generada exitosamente: {ruta_salida}")
+        print(f" Imagen final generada exitosamente: {ruta_salida}")
         return True
         
     except Exception as e:
-        print(f"❌ Error al generar imagen final: {e}")
+        print(f" Error al generar imagen final: {e}")
         import traceback
         traceback.print_exc()
         return False

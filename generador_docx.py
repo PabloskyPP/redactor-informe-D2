@@ -315,7 +315,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # ========================================================================
     # SALTO DE PÁGINA Y RESULTADOS
     # ========================================================================
-    doc.add_page_break()
     
     titulo_resumen = doc.add_paragraph()
     run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre=nombre))
@@ -381,19 +380,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # PÁRRAFOS CONDICIONALES
     # ========================================================================
     
-    # VARIABILIDAD
-    p_var_titulo = doc.add_paragraph()
-    run = p_var_titulo.add_run("🔹 Variabilidad del rendimiento (VAR)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Seleccionar párrafo VAR según condición especial
-    var_key = clasificaciones['VAR']
-    if clasificaciones.get('VAR_especial', False) and var_key in ['alto', 'muy alto']:
-        var_key = var_key + '_especial'
-    
-    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre))
-
     # VELOCIDAD DE PROCESAMIENTO
     p_tr_titulo = doc.add_paragraph()
     run = p_tr_titulo.add_run("🔹 Velocidad de procesamiento (TR)")
@@ -437,6 +423,20 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     con_nivel = normalizar_nivel(clasificaciones['CON'])
     
     doc.add_paragraph(PARRAFOS_CON[con_nivel])
+
+        # VARIABILIDAD
+    p_var_titulo = doc.add_paragraph()
+    run = p_var_titulo.add_run("🔹 Variabilidad del rendimiento (VAR)")
+    run.bold = True
+    run.font.size = Pt(11)
+    
+    # Seleccionar párrafo VAR según condición especial
+    var_key = clasificaciones['VAR']
+    if clasificaciones.get('VAR_especial', False) and var_key in ['alto', 'muy alto']:
+        var_key = var_key + '_especial'
+    
+    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre))
+
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
