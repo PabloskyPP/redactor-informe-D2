@@ -25,6 +25,8 @@ NOMBRE_EVALUADO = "Juan Pérez"
 from lector_datos import leer_datos_excel, calcular_puntuaciones_directas
 from reglas_psicometricas import obtener_puntuaciones_tipicas
 from generador_docx import crear_informe_docx, guardar_informe
+from generador_imagen_final import generar_imagen_final
+import os
 
 
 def generar_informe_completo():
@@ -49,6 +51,14 @@ def generar_informe_completo():
     print(f"  Errores C: {resultados['C_total']}")
     print(f"  CON: {resultados['CON']}")
     print(f"  VAR: {resultados['VAR']}")
+    
+    # Generar imagen final con superposiciones
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    ruta_base = os.path.join(script_dir, 'grafico_D2.png')
+    ruta_final = os.path.join(script_dir, 'grafico_D2_final.png')
+    
+    print("\nGenerando imagen final con superposiciones...")
+    generar_imagen_final(resultados, resultados['datos_d2'], ruta_base, ruta_final)
     
     # Obtener clasificaciones
     clasificaciones = obtener_puntuaciones_tipicas(resultados)
