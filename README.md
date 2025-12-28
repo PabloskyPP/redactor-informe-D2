@@ -22,13 +22,15 @@ pip install -r requirements.txt
 ```
 proyecto_d2/
 │
-├── main.py                    # Programa principal
-├── lector_datos.py           # Lee datos del Excel
-├── reglas_psicometricas.py   # Aplica baremos según edad
-├── textos.py                 # Textos del informe
-├── generador_docx.py         # Genera el documento Word
-├── requirements.txt          # Dependencias del proyecto
-└── README.md                 # Este archivo
+├── main.py                      # Programa principal
+├── lector_datos.py              # Lee datos del Excel
+├── reglas_psicometricas.py      # Aplica baremos según edad
+├── textos.py                    # Textos del informe
+├── generador_imagen_final.py    # Genera grafico_D2_final.png con overlays
+├── generador_docx.py            # Genera el documento Word
+├── grafico_D2.png               # Imagen base del gráfico D2
+├── requirements.txt             # Dependencias del proyecto
+└── README.md                    # Este archivo
 ```
 
 ## 📊 Formato del Archivo Excel
@@ -67,6 +69,16 @@ NOMBRE_CASO = "caso"  # Cambiar por el nombre real del evaluado
 ```bash
 python main.py
 ```
+
+El programa ejecutará automáticamente los siguientes pasos:
+1. Leer datos del archivo Excel
+2. Calcular puntuaciones directas
+3. **Generar imagen final** `grafico_D2_final.png` con superposiciones
+4. Obtener puntuaciones típicas (baremos)
+5. Generar informe en formato Word
+6. Guardar el informe
+
+**Nota**: La imagen `grafico_D2_final.png` se genera automáticamente en el mismo directorio del script.
 
 ## 📈 Puntuaciones Calculadas
 
@@ -133,10 +145,14 @@ El informe generado incluye:
 2. **Introducción** personalizada con el nombre del evaluado
 3. **Descripción de la prueba** y variables técnicas (TR, TA, O, C, E, TOT, CON, VAR)
 4. **GRÁFICO D2** (Página 3)
+   - Imagen final `grafico_D2_final.png` generada automáticamente
+   - Incluye todas las superposiciones gráficas:
+     - Textos rotados verticalmente con puntuaciones totales (TR, TA, O, C)
+     - Cuadros de texto por fila con valores de cada índice
+     - Puntos negros marcando respuestas seleccionadas
+     - Líneas conectando puntos finales entre filas
    - Imagen escalada para ocupar verticalmente toda la página
    - Mantiene proporción sin deformación
-   - Cuadros de texto rotados verticalmente con puntuaciones (TR, TA, O, C)
-   - Posiciones de cuadros configurables desde el código Python
 5. **Tabla de resultados** con puntuaciones directas y clasificaciones
 6. **Interpretación detallada** de cada índice:
    - Variabilidad del rendimiento (VAR)
@@ -146,22 +162,61 @@ El informe generado incluye:
    - Concentración (CON)
 7. **Síntesis del perfil atencional** con interpretación integrada
 
+## 🎨 Generación de Imagen Final
+
+El programa ahora genera automáticamente `grafico_D2_final.png` con superposiciones gráficas antes de insertarla en el informe. Esta imagen incluye:
+
+### Elementos Superpuestos:
+- **Textos rotados**: Puntuaciones totales (TR_total, TA_total, O_total, C_total) rotados verticalmente
+- **Índices por fila**: Valores de TR, TA, O, C para cada una de las 14 filas
+- **Puntos negros**: Marcan cada posición donde el evaluado seleccionó un ítem (selected != FALSE)
+- **Líneas conectoras**: Unen el último punto de cada fila con el último punto de la fila siguiente
+
+### Ventajas:
+- ✅ Mayor control sobre el posicionamiento gráfico
+- ✅ No depende de manipulación XML de Word
+- ✅ Proceso reproducible
+- ✅ Imagen pre-renderizada lista para insertar
+
 ## 🔧 Configuración Avanzada
 
-### Personalización de Posiciones de Cuadros de Texto en el Gráfico
+### Personalización de Posiciones en la Imagen
 
-Las posiciones de los cuadros de texto sobre el gráfico D2 pueden ajustarse editando el diccionario `textbox_positions` en `generador_docx.py` (línea ~310):
+Las posiciones de los elementos gráficos pueden ajustarse editando las constantes en `generador_imagen_final.py`:
 
 ```python
-textbox_positions = {
-    'TR': {'x': Inches(0.5), 'y': Inches(2.0)},   # Posición para TR
-    'TA': {'x': Inches(1.5), 'y': Inches(2.5)},   # Posición para TA
-    'O': {'x': Inches(2.5), 'y': Inches(3.0)},    # Posición para O
-    'C': {'x': Inches(3.5), 'y': Inches(3.5)},    # Posición para C
+# Posiciones para textos rotados de totales (x, y en píxeles)
+POSICIONES_TOTALES = {
+    'TR_total': (20, 350),
+    'TA_total': (50, 350),
+    'O_total': (480, 350),
+    'C_total': (510, 350),
 }
+
+# Márgenes del área útil del gráfico
+MARGEN_SUPERIOR = 80    # Píxeles desde el top hasta la primera fila
+MARGEN_INFERIOR = 40    # Píxeles desde la última fila hasta el bottom
+MARGEN_IZQUIERDO = 40   # Píxeles desde el left hasta la primera columna
+MARGEN_DERECHO = 40     # Píxeles desde la última columna hasta el right
+
+# Configuración de puntos y líneas
+RADIO_PUNTO = 4         # Radio de los puntos negros
+GROSOR_LINEA = 2        # Grosor de las líneas conectoras
 ```
 
-Los valores se especifican en pulgadas desde el borde de la página. Ajuste estos valores para alinear los cuadros con las líneas correspondientes del gráfico.
+### Personalización de Fuentes y Colores
+
+Puede ajustar los tamaños de fuente y colores en `generador_imagen_final.py`:
+
+```python
+# Tamaños de fuente
+FUENTE_TOTALES_TAMANIO = 16
+FUENTE_INDICES_TAMANIO = 12
+
+# Colores (RGBA)
+COLOR_PUNTO = (0, 0, 0, 255)  # Negro para puntos
+COLOR_LINEA = (0, 0, 0, 255)  # Negro para líneas
+```
 
 ## 🔧 Solución de Problemas
 
