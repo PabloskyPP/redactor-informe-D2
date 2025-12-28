@@ -201,9 +201,12 @@ def dibujar_textos_rotados_totales(draw, resultados, img_width, img_height):
         txt_draw = ImageDraw.Draw(txt_img)  # Objeto de dibujo para la imagen temporal
         txt_draw.text((5, 5), texto, font=fuente, fill=(0, 0, 0, 255))  # Dibujar el texto en la imagen temporal
 
+        # Rotar la imagen 90 grados (sentido antihorario) para texto vertical
+        txt_img_rotated = txt_img.rotate(90, expand=True)
+
         # Pegar la imagen rotada en la imagen principal
-        # Usar la imagen original como máscara para transparencia
-        draw._image.paste((x, y))  # Pegar el texto rotado en la posición calculada
+        # Usar la imagen rotada como máscara para transparencia
+        draw._image.paste(txt_img_rotated, (x, y), txt_img_rotated)  # Pegar el texto rotado en la posición calculada
 
 def dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height):
     """
@@ -356,7 +359,10 @@ def generar_imagen_final(resultados, datos_d2, ruta_grafico_base='grafico_D2.png
         # 6. Conectar puntos entre filas
         conectar_puntos_entre_filas(draw, puntos_por_fila)
 
-        # 7. Guardar imagen final
+        # 7. Rotar imagen 90 grados en sentido horario antes de guardar
+        img = img.rotate(-90, expand=True)  # -90 grados = rotación horaria
+
+        # 8. Guardar imagen final
         img.save(ruta_salida, 'PNG')  # Guardar la imagen generada
 
         print(f" Imagen final generada exitosamente: {ruta_salida}")
