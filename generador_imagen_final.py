@@ -29,10 +29,10 @@ COLUMNAS_MAX = 47  # Número máximo de columnas en el test D2
 
 # Márgenes y área útil del gráfico (ajustar según la imagen real)
 # Estos valores mapean el área donde están dibujadas las filas del test
-MARGEN_SUPERIOR = 70  # Píxeles desde el top hasta la primera fila
-MARGEN_INFERIOR = 60  # Píxeles desde la última fila hasta el bottom
-MARGEN_IZQUIERDO = 50  # Píxeles desde el left hasta la primera columna
-MARGEN_DERECHO = 90  # Píxeles desde la última columna hasta el right
+MARGEN_SUPERIOR = 60  # Píxeles desde el top hasta la primera fila
+MARGEN_INFERIOR = 75  # Píxeles desde la última fila hasta el bottom
+MARGEN_IZQUIERDO = 68  # Píxeles desde el left hasta la primera columna
+MARGEN_DERECHO = 143  # Píxeles desde la última columna hasta el right
 
 # Posiciones para textos rotados de totales (ajustables)
 # Formato: (x, y) en píxeles desde la esquina superior izquierda
