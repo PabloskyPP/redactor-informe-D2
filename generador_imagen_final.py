@@ -204,9 +204,15 @@ def dibujar_textos_rotados_totales(draw, resultados, img_width, img_height):
         'TA_total2': f"{resultados['TA_total']}",  # Texto para TA_total
         'O_total': f"{resultados['O_total']}",  # Texto para O_total
         'O_total2': f"{resultados['O_total']}",  # Texto para O_total
-        'C_total': f"{resultados['C_total']}",  # Texto para 
+        'C_total': f"{resultados['C_total']}",  # Texto para C_total
         'C_total2': f"{resultados['C_total']}",  # Texto para C_total
         'C_total3': f"{resultados['C_total']}",  # Texto para C_total
+        'TOT_total2': f"{resultados['TOT']}",  # Texto para TOT (TR - (O+C))
+        'CON_total2': f"{resultados['CON']}",  # Texto para CON (TA - C)
+        'VAR_total': f"{resultados['VAR']}",  # Texto para VAR (TR_max - TR_min)
+        'TR_min': f"{resultados['TR_min']}",  # Texto para TR_min
+        'TR_max': f"{resultados['TR_max']}",  # Texto para TR_max
+        'E_total2': f"{resultados['E_total']}",  # Texto para E_total (O + C)
     }
 
     for clave, texto in textos.items():
