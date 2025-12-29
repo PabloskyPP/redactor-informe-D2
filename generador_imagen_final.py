@@ -2,7 +2,7 @@
 Módulo para generar la imagen final grafico_D2_final.png con superposiciones gráficas
 
 Este módulo toma como base grafico_D2.png y genera una versión final con:
-- Textos rotados de puntuaciones globales (TR_total, TA_total, O_total, C_total)
+- Textos de puntuaciones globales (TR_total, TA_total, O_total, C_total)
 - Cuadros de texto por fila para cada índice (TR, TA, O, C)
 - Puntos negros en posiciones donde selected != 'FALSE' (items seleccionados)
 - Líneas conectando últimos puntos de filas consecutivas
@@ -31,21 +31,34 @@ COLUMNAS_MAX = 47  # Número máximo de columnas en el test D2
 # Estos valores mapean el área donde están dibujadas las filas del test
 MARGEN_SUPERIOR = 60  # Píxeles desde el top hasta la primera fila
 MARGEN_INFERIOR = 75  # Píxeles desde la última fila hasta el bottom
-MARGEN_IZQUIERDO = 68  # Píxeles desde el left hasta la primera columna
+MARGEN_IZQUIERDO = 65  # Píxeles desde el left hasta la primera columna
 MARGEN_DERECHO = 143  # Píxeles desde la última columna hasta el right
 
 # Posiciones para textos rotados de totales (ajustables)
 # Formato: (x, y) en píxeles desde la esquina superior izquierda
-POSICIONES_TOTALES = {
-    'TR_total': (20, 350),  # Posición del texto rotado para TR_total
-    'TA_total': (50, 350),  # Posición del texto rotado para TA_total
-    'O_total': (480, 350),  # Posición del texto rotado para O_total
-    'C_total': (510, 350),  # Posición del texto rotado para C_total
+
+
+POSICIONES_TOTALES = { 
+    'TR_total': (104, 511),  #  658
+    'TR_total2': (659, 512),  # 
+    'TA_total': (287, 511),  # 
+    'TA_total2': (696, 512),  # 277
+    'O_total': (138, 511),  # 
+    'O_total2': (721, 512),  # 
+    'C_total': (171, 511), 
+    'C_total2': (332, 511),  #381
+    'C_total3': (743, 512),  
+    'TOT_total2': (90, 510),  # Hay que calcular y declarar este y siguientes índices
+    'CON_total2': (240, 510), 
+    'VAR_total': (430, 510),   
+    'TR_min': (480, 510),  
+    'TR_max': (510, 510),  
+    'E_total2': (765, 512), 
 }
 
 # Tamaño de fuente para textos
-FUENTE_TOTALES_TAMANIO = 12  # Tamaño de fuente para textos de totales
-FUENTE_INDICES_TAMANIO = 11  # Tamaño de fuente para textos de índices
+FUENTE_TOTALES_TAMANIO = 9  # Tamaño de fuente para textos de totales
+FUENTE_INDICES_TAMANIO = 9  # Tamaño de fuente para textos de índices
 
 # Configuración de puntos y líneas
 RADIO_PUNTO = 2  # Radio de los puntos negros en píxeles
@@ -54,7 +67,7 @@ GROSOR_LINEA = 2  # Grosor de las líneas conectoras en píxeles
 COLOR_LINEA = (0, 0, 0, 255)  # Color negro para las líneas
 
 # Configuración de rotaciones (en grados, siguiendo convención PIL)
-ROTACION_TEXTO_VERTICAL = 90  # Rotación antihoraria para texto vertical
+ROTACION_TEXTO_VERTICAL = 0  # Rotación antihoraria para texto vertical
 ROTACION_IMAGEN_FINAL = -90  # Rotación horaria de la imagen final antes de guardar
 
 
@@ -185,10 +198,15 @@ def dibujar_textos_rotados_totales(draw, resultados, img_width, img_height):
     fuente = cargar_fuente(FUENTE_TOTALES_TAMANIO)  # Cargar la fuente para los textos
 
     textos = {
-        'TR_total': f"TR: {resultados['TR_total']}",  # Texto para TR_total
-        'TA_total': f"TA: {resultados['TA_total']}",  # Texto para TA_total
-        'O_total': f"O: {resultados['O_total']}",  # Texto para O_total
-        'C_total': f"C: {resultados['C_total']}",  # Texto para C_total
+        'TR_total': f"{resultados['TR_total']}",  # Texto para TR_total
+        'TR_total2': f"{resultados['TR_total']}",  # Texto para TR_total
+        'TA_total': f"{resultados['TA_total']}",  # Texto para TA_total
+        'TA_total2': f"{resultados['TA_total']}",  # Texto para TA_total
+        'O_total': f"{resultados['O_total']}",  # Texto para O_total
+        'O_total2': f"{resultados['O_total']}",  # Texto para O_total
+        'C_total': f"{resultados['C_total']}",  # Texto para 
+        'C_total2': f"{resultados['C_total']}",  # Texto para C_total
+        'C_total3': f"{resultados['C_total']}",  # Texto para C_total
     }
 
     for clave, texto in textos.items():
