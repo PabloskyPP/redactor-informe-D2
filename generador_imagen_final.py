@@ -191,7 +191,7 @@ def dibujar_textos_rotados_totales(draw, resultados, img_width, img_height):
     
     Args:
         draw: Objeto ImageDraw
-        resultados: Dict con puntuaciones (TR_total, TA_total, O_total, C_total)
+        resultados: Dict con puntuaciones (TR_total, TA_total, O_total, C_total, TOT, CON, VAR, TR_max, TR_min, E_total)
         img_width: Ancho de la imagen
         img_height: Alto de la imagen
     """
