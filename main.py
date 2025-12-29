@@ -55,13 +55,16 @@ def main():
         print(f"    TR max: {resultados['TR_max']}")
         print(f"    TR min: {resultados['TR_min']}")
         print(f"    VAR: {resultados['VAR']}")
-        
-        # Mostrar celdas seleccionadas
-        print()
-        mostrar_celdas_seleccionadas(resultados)
     except Exception as e:
         print(f"   X Error al calcular puntuaciones: {e}")
         sys.exit(1)
+    
+    # Mostrar celdas seleccionadas
+    try:
+        print()
+        mostrar_celdas_seleccionadas(resultados)
+    except Exception as e:
+        print(f"   X Error al mostrar celdas seleccionadas: {e}")
     
     print()
     
