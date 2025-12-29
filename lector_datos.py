@@ -1,5 +1,11 @@
 """
 Módulo para leer datos del test D2 desde archivos Excel
+
+Este módulo proporciona funciones para:
+- Leer datos del Excel del test D2
+- Calcular puntuaciones directas por fila y totales
+- Identificar explícitamente celdas seleccionadas y no seleccionadas
+- Proporcionar estructuras de datos claras y accesibles para análisis posterior
 """
 import pandas as pd
 
@@ -53,6 +59,46 @@ def leer_datos_excel(ruta_archivo):
         raise
 
 
+def identificar_celdas_seleccionadas(df):
+    """
+    Identifica las celdas seleccionadas y no seleccionadas de forma explícita
+    
+    Args:
+        df: DataFrame con los datos del test D2
+        
+    Returns:
+        dict: Diccionario con dos estructuras:
+            - 'seleccionadas': set de tuplas (row, column) para celdas seleccionadas
+            - 'no_seleccionadas': set de tuplas (row, column) para celdas no seleccionadas
+            - 'mapa_seleccion': dict {(row, column): bool} para consulta rápida
+    """
+    seleccionadas = set()
+    no_seleccionadas = set()
+    
+    for _, fila in df.iterrows():
+        row = int(fila['row'])
+        column = int(fila['letter_num'])
+        celda = (row, column)
+        
+        if fila['selected'] != 'FALSE':
+            seleccionadas.add(celda)
+        else:
+            no_seleccionadas.add(celda)
+    
+    # Crear mapa de selección para consulta rápida: True si está seleccionada, False si no
+    mapa_seleccion = {}
+    for celda in seleccionadas:
+        mapa_seleccion[celda] = True
+    for celda in no_seleccionadas:
+        mapa_seleccion[celda] = False
+    
+    return {
+        'seleccionadas': seleccionadas,
+        'no_seleccionadas': no_seleccionadas,
+        'mapa_seleccion': mapa_seleccion
+    }
+
+
 def calcular_puntuaciones_directas(datos):
     """
     Calcula las puntuaciones directas del test D2
@@ -61,7 +107,11 @@ def calcular_puntuaciones_directas(datos):
         datos: Dict con 'edad' y 'datos_d2'
         
     Returns:
-        dict: Diccionario con todas las puntuaciones directas y por fila
+        dict: Diccionario con todas las puntuaciones directas y por fila.
+              Incluye estructuras explícitas para:
+              - indices_por_fila: dict con TR, TA, O, C para cada fila (1-14)
+              - celdas_seleccionadas: estructura para consultar selección de celdas
+              - índices globales: TR_total, TA_total, O_total, C_total, E_total, TOT, CON, VAR
     """
     df = datos['datos_d2']
     
@@ -69,16 +119,29 @@ def calcular_puntuaciones_directas(datos):
     rows = df['row'].unique()
     rows = sorted(rows)
     
+    # Identificar celdas seleccionadas de forma explícita
+    celdas_seleccionadas = identificar_celdas_seleccionadas(df)
+    
     resultados = {
         'edad': datos['edad'],
         'sub_num': datos.get('sub_num'),
         'nombre_completo': datos.get('nombre_completo'),
         'nombre': datos.get('nombre'),
         'datos_d2': df,  # Incluir DataFrame para generador_imagen_final
+        
+        # Estructura explícita de celdas seleccionadas
+        'celdas_seleccionadas': celdas_seleccionadas,
+        
+        # Índices por fila (listas, compatibilidad hacia atrás)
         'TR_por_fila': [],
         'TA_por_fila': [],
         'O_por_fila': [],
         'C_por_fila': [],
+        
+        # Estructura explícita de índices por fila (diccionario por row)
+        'indices_por_fila': {},
+        
+        # Índices totales
         'TR_total': 0,
         'TA_total': 0,
         'O_total': 0,
@@ -119,6 +182,14 @@ def calcular_puntuaciones_directas(datos):
         # C: casos con target='no' y selected != 'FALSE'
         C = len(df_row[(df_row['target'] == 'no') & (df_row['selected'] != 'FALSE')])
         resultados['C_por_fila'].append(C)
+        
+        # Añadir índices a la estructura explícita por fila
+        resultados['indices_por_fila'][row] = {
+            'TR': TR,
+            'TA': TA,
+            'O': O,
+            'C': C
+        }
     
     # Calcular totales
     resultados['TR_total'] = sum(resultados['TR_por_fila'])
@@ -127,10 +198,10 @@ def calcular_puntuaciones_directas(datos):
     resultados['C_total'] = sum(resultados['C_por_fila'])
     resultados['E_total'] = resultados['O_total'] + resultados['C_total']
     
-    # TOT = TR_total - E_total
+    # TOT = TR_total - E_total (rendimiento neto)
     resultados['TOT'] = resultados['TR_total'] - resultados['E_total']
     
-    # CON = TA_total - C_total
+    # CON = TA_total - C_total (índice de concentración)
     resultados['CON'] = resultados['TA_total'] - resultados['C_total']
     
     # TR_max y TR_min con sus posiciones (índices de fila)
@@ -144,3 +215,113 @@ def calcular_puntuaciones_directas(datos):
         resultados['TR_min_pos'] = resultados['TR_por_fila'].index(resultados['TR_min'])
     
     return resultados
+
+
+# ============================================================================
+# FUNCIONES DE UTILIDAD PARA CONSULTAR RESULTADOS
+# ============================================================================
+
+def esta_celda_seleccionada(resultados, row, column):
+    """
+    Consulta si una celda específica está seleccionada
+    
+    Args:
+        resultados: Dict devuelto por calcular_puntuaciones_directas
+        row: Número de fila (1-14)
+        column: Número de columna (1-47)
+        
+    Returns:
+        bool: True si la celda está seleccionada, False si no
+    """
+    return resultados['celdas_seleccionadas']['mapa_seleccion'].get((row, column), False)
+
+
+def obtener_indices_fila(resultados, row):
+    """
+    Obtiene los índices (TR, TA, O, C) de una fila específica
+    
+    Args:
+        resultados: Dict devuelto por calcular_puntuaciones_directas
+        row: Número de fila (1-14)
+        
+    Returns:
+        dict: {'TR': valor, 'TA': valor, 'O': valor, 'C': valor} o None si la fila no existe
+    """
+    return resultados['indices_por_fila'].get(row)
+
+
+def obtener_celdas_seleccionadas(resultados):
+    """
+    Obtiene el conjunto de todas las celdas seleccionadas
+    
+    Args:
+        resultados: Dict devuelto por calcular_puntuaciones_directas
+        
+    Returns:
+        set: Conjunto de tuplas (row, column) para todas las celdas seleccionadas
+    """
+    return resultados['celdas_seleccionadas']['seleccionadas']
+
+
+def obtener_celdas_no_seleccionadas(resultados):
+    """
+    Obtiene el conjunto de todas las celdas no seleccionadas
+    
+    Args:
+        resultados: Dict devuelto por calcular_puntuaciones_directas
+        
+    Returns:
+        set: Conjunto de tuplas (row, column) para todas las celdas no seleccionadas
+    """
+    return resultados['celdas_seleccionadas']['no_seleccionadas']
+
+
+def obtener_resumen_indices(resultados):
+    """
+    Obtiene un resumen legible de todos los índices calculados
+    
+    Args:
+        resultados: Dict devuelto por calcular_puntuaciones_directas
+        
+    Returns:
+        str: Texto con resumen formateado de todos los índices
+    """
+    lineas = []
+    lineas.append("=" * 70)
+    lineas.append("RESUMEN DE ÍNDICES DEL TEST D2")
+    lineas.append("=" * 70)
+    lineas.append("")
+    
+    # Índices globales
+    lineas.append("ÍNDICES GLOBALES:")
+    lineas.append(f"  TR_total (Total intentado): {resultados['TR_total']}")
+    lineas.append(f"  TA_total (Total aciertos): {resultados['TA_total']}")
+    lineas.append(f"  O_total (Omisiones): {resultados['O_total']}")
+    lineas.append(f"  C_total (Comisiones): {resultados['C_total']}")
+    lineas.append(f"  E_total (Errores totales O+C): {resultados['E_total']}")
+    lineas.append(f"  TOT (Rendimiento neto TR-E): {resultados['TOT']}")
+    lineas.append(f"  CON (Concentración TA-C): {resultados['CON']}")
+    lineas.append(f"  TR_max (TR máximo): {resultados['TR_max']}")
+    lineas.append(f"  TR_min (TR mínimo): {resultados['TR_min']}")
+    lineas.append(f"  VAR (Variabilidad): {resultados['VAR']}")
+    lineas.append("")
+    
+    # Índices por fila
+    lineas.append("ÍNDICES POR FILA:")
+    for row in sorted(resultados['indices_por_fila'].keys()):
+        indices = resultados['indices_por_fila'][row]
+        lineas.append(f"  Fila {row:2d}: TR={indices['TR']:2d}, TA={indices['TA']:2d}, "
+                     f"O={indices['O']:2d}, C={indices['C']:2d}")
+    lineas.append("")
+    
+    # Estadísticas de selección
+    total_celdas = len(resultados['celdas_seleccionadas']['seleccionadas']) + \
+                   len(resultados['celdas_seleccionadas']['no_seleccionadas'])
+    lineas.append("ESTADÍSTICAS DE SELECCIÓN:")
+    lineas.append(f"  Total de celdas: {total_celdas}")
+    lineas.append(f"  Celdas seleccionadas: {len(resultados['celdas_seleccionadas']['seleccionadas'])}")
+    lineas.append(f"  Celdas no seleccionadas: {len(resultados['celdas_seleccionadas']['no_seleccionadas'])}")
+    lineas.append("")
+    lineas.append("=" * 70)
+    
+    return "\n".join(lineas)
