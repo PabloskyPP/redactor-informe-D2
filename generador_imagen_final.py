@@ -143,7 +143,7 @@ def obtener_posicion_cuadro_texto_fila(row, indice, img_width, img_height):
     Returns:
         tuple: (x, y) coordenadas en píxeles para el cuadro de texto
     """
-    # Posición base: a la izquierda de la fila
+    # Posición base: a la derecha de la fila
     _, _, _, y_inicio = calcular_dimensiones_grid(img_width, img_height)  # Obtener coordenada inicial y
     area_util_height = img_height - MARGEN_SUPERIOR - MARGEN_INFERIOR  # Altura útil del área
     espaciado_vertical = area_util_height / (FILAS - 1) if FILAS > 1 else area_util_height  # Espaciado entre filas
@@ -153,10 +153,10 @@ def obtener_posicion_cuadro_texto_fila(row, indice, img_width, img_height):
 
     # Offset horizontal según el índice
     offsets = {
-        'TR': 5,  # Offset para TR
-        'TA': 20,  # Offset para TA
-        'O': img_width - 50,  # Offset para O
-        'C': img_width - 25,  # Offset para C
+        'TR': img_width - 80,  # Offset para TR
+        'TA': img_width - 70,  # Offset para TA
+        'O': img_width - 60,  # Offset para O
+        'C': img_width - 50,  # Offset para C
     }
 
     x = offsets.get(indice, 5)  # Obtener el offset correspondiente al índice
