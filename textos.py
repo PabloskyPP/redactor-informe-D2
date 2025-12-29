@@ -15,7 +15,7 @@ PARRAFOS_FIJOS = {
     
     'titulo_resultados': "Presentación de los resultados del evaluado.",
     
-    'titulo_resumen': "Resumen del rendimiento y perfil atencional de {nombre} durante la prueba",
+    'titulo_resumen': "Resumen del rendimiento y perfil atencional de {nombre_completo} durante la prueba",
     
     'rendimiento_general': "{nombre} fue evaluado/a mediante la prueba Test d2 de Atención, prueba que permite valorar la capacidad de atención sostenida, selectiva y concentración bajo presión temporal. En términos generales, el rendimiento obtenido refleja el nivel de velocidad de procesamiento, cantidad y calidad de la atención. Permitiendo de esta manera, describir el perfil atencional de {nombre}, considerando tanto aspectos cuantitativos como cualitativos de su ejecución durante la tarea."""
 }
