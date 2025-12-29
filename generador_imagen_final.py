@@ -2,10 +2,13 @@
 Módulo para generar la imagen final grafico_D2_final.png con superposiciones gráficas
 
 Este módulo toma como base grafico_D2.png y genera una versión final con:
-- Textos de puntuaciones globales (TR_total, TA_total, O_total, C_total)
+- Textos de puntuaciones globales (TR_total, TA_total, O_total, C_total, TOT, CON, VAR, TR_max, TR_min, E_total)
 - Cuadros de texto por fila para cada índice (TR, TA, O, C)
 - Puntos negros en posiciones donde selected != 'FALSE' (items seleccionados)
 - Líneas conectando últimos puntos de filas consecutivas
+
+El módulo utiliza las estructuras explícitas de datos proporcionadas por lector_datos
+para identificar celdas seleccionadas de forma clara y eficiente.
 
 Nota: El Excel usa el valor 'FALSE' en inglés, no 'FALSO'
 """
@@ -270,16 +273,16 @@ def dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height):
             texto = str(valor)  # Convertir valor a texto
             draw.text((x, y), texto, font=fuente, fill=(0, 0, 0, 255))  # Dibujar el texto en la posición calculada
 
-def dibujar_puntos_seleccionados(draw, datos_d2, img_width, img_height):
+def dibujar_puntos_seleccionados(draw, resultados, img_width, img_height):
     """
     Dibuja puntos negros en las posiciones donde selected != 'FALSE'
     
-    Nota: El Excel usa 'FALSE' (inglés) para items no seleccionados.
-    Esta función dibuja puntos para todos los items donde selected != 'FALSE'.
+    Esta función utiliza la estructura explícita de celdas seleccionadas 
+    proporcionada por lector_datos para un acceso eficiente y claro.
     
     Args:
         draw: Objeto ImageDraw
-        datos_d2: DataFrame con los datos del test D2
+        resultados: Dict con resultados que incluye 'celdas_seleccionadas' o 'datos_d2'
         img_width: Ancho de la imagen
         img_height: Alto de la imagen
         
@@ -288,29 +291,55 @@ def dibujar_puntos_seleccionados(draw, datos_d2, img_width, img_height):
     """
     puntos_por_fila = {}  # Inicializar diccionario para almacenar puntos por fila
 
-    # Filtrar filas donde selected != 'FALSE'
-    df_seleccionados = datos_d2[datos_d2['selected'] != 'FALSE'].copy()  # Filtrar datos seleccionados
+    # Usar la estructura explícita de celdas seleccionadas si está disponible
+    if 'celdas_seleccionadas' in resultados:
+        celdas_seleccionadas = resultados['celdas_seleccionadas']['seleccionadas']
+        
+        for celda in celdas_seleccionadas:
+            row, column = celda
+            
+            # Mapear a coordenadas
+            x, y = mapear_fila_columna_a_coordenadas(row, column, img_width, img_height)
+            
+            # Dibujar punto (círculo relleno)
+            draw.ellipse(
+                [(x - RADIO_PUNTO, y - RADIO_PUNTO),
+                 (x + RADIO_PUNTO, y + RADIO_PUNTO)],
+                fill=COLOR_PUNTO
+            )
+            
+            # Guardar punto para posterior conexión
+            if row not in puntos_por_fila:
+                puntos_por_fila[row] = []
+            puntos_por_fila[row].append((x, y))
+    else:
+        # Fallback: usar DataFrame directamente (compatibilidad hacia atrás)
+        datos_d2 = resultados.get('datos_d2')
+        if datos_d2 is None:
+            return puntos_por_fila
+            
+        df_seleccionados = datos_d2[datos_d2['selected'] != 'FALSE'].copy()
+        
+        for _, fila in df_seleccionados.iterrows():
+            row = int(fila['row'])
+            column = int(fila['letter_num'])
+            
+            # Mapear a coordenadas
+            x, y = mapear_fila_columna_a_coordenadas(row, column, img_width, img_height)
+            
+            # Dibujar punto (círculo relleno)
+            draw.ellipse(
+                [(x - RADIO_PUNTO, y - RADIO_PUNTO),
+                 (x + RADIO_PUNTO, y + RADIO_PUNTO)],
+                fill=COLOR_PUNTO
+            )
+            
+            # Guardar punto para posterior conexión
+            if row not in puntos_por_fila:
+                puntos_por_fila[row] = []
+            puntos_por_fila[row].append((x, y))
 
-    for _, fila in df_seleccionados.iterrows():  # Iterar sobre cada fila seleccionada
-        row = int(fila['row'])  # Obtener número de fila
-        column = int(fila['letter_num'])  # Obtener número de columna
-
-        # Mapear a coordenadas
-        x, y = mapear_fila_columna_a_coordenadas(row, column, img_width, img_height)  # Calcular coordenadas
-
-        # Dibujar punto (círculo relleno)
-        draw.ellipse(
-            [(x - RADIO_PUNTO, y - RADIO_PUNTO),  # Coordenada superior izquierda del círculo
-             (x + RADIO_PUNTO, y + RADIO_PUNTO)],  # Coordenada inferior derecha del círculo
-            fill=COLOR_PUNTO  # Color del punto
-        )
-
-        # Guardar punto para posterior conexión
-        if row not in puntos_por_fila:
-            puntos_por_fila[row] = []  # Inicializar lista de puntos para la fila
-        puntos_por_fila[row].append((x, y))  # Agregar punto a la lista de la fila
-
-    return puntos_por_fila  # Retornar diccionario con puntos por fila
+    return puntos_por_fila
 
 
 def conectar_puntos_entre_filas(draw, puntos_por_fila):
@@ -382,8 +411,8 @@ def generar_imagen_final(resultados, datos_d2, ruta_grafico_base='grafico_D2.png
         # 4. Dibujar cuadros de texto por fila
         dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height)
 
-        # 5. Dibujar puntos donde selected != FALSO
-        puntos_por_fila = dibujar_puntos_seleccionados(draw, datos_d2, img_width, img_height)
+        # 5. Dibujar puntos donde selected != FALSO (usa estructura explícita de celdas)
+        puntos_por_fila = dibujar_puntos_seleccionados(draw, resultados, img_width, img_height)
 
         # 6. Conectar puntos entre filas
         conectar_puntos_entre_filas(draw, puntos_por_fila)
