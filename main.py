@@ -40,10 +40,6 @@ def main():
         sys.exit(1)
     
     print()
-
-    # Mostrar celdas seleccionadas
-    mostrar_celdas_seleccionadas(resultados)
-
     
     # Paso 2: Calcular puntuaciones directas
     print("Paso 2: Calculando puntuaciones directas...")
@@ -62,6 +58,13 @@ def main():
     except Exception as e:
         print(f"   X Error al calcular puntuaciones: {e}")
         sys.exit(1)
+    
+    # Mostrar celdas seleccionadas
+    try:
+        print()
+        mostrar_celdas_seleccionadas(resultados)
+    except Exception as e:
+        print(f"   X Error al mostrar celdas seleccionadas: {e}")
     
     print()
     
