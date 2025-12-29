@@ -2,6 +2,9 @@
 Módulo con los textos para generar el informe del test D2
 """
 
+# Importar la variable 'nombre_completo' desde el módulo correspondiente
+from lector_datos import nombre_completo
+
 # ============================================================================
 # PÁRRAFOS FIJOS (siempre se incluyen)
 # ============================================================================

@@ -51,12 +51,12 @@ POSICIONES_TOTALES = {
     'C_total': (171, 511), 
     'C_total2': (332, 511),  #381
     'C_total3': (743, 512),  
-    'TOT_total2': (90, 510),  # Hay que calcular y declarar este y siguientes índices
-    'CON_total2': (240, 510), 
+    'TOT_total2': (80, 510),  # Hay que calcular y declarar este y siguientes índices
+    'CON_total2': (244, 511), 
     'VAR_total': (430, 510),   
-    'TR_min': (480, 510),  
-    'TR_max': (510, 510),  
-    'E_total2': (765, 512), 
+    'TR_min': (474, 510),  
+    'TR_max': (505, 510),  
+    'E_total2': (770, 512), 
 }
 
 # Tamaño de fuente para textos

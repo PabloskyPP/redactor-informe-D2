@@ -3,7 +3,7 @@ Programa principal para generar informe del test D2
 """
 import sys
 import os
-from lector_datos import leer_datos_excel, calcular_puntuaciones_directas
+from lector_datos import leer_datos_excel, calcular_puntuaciones_directas, mostrar_celdas_seleccionadas
 from reglas_psicometricas import obtener_puntuaciones_tipicas
 from generador_docx import crear_informe_docx, guardar_informe
 from generador_imagen_final import generar_imagen_final
@@ -40,6 +40,10 @@ def main():
         sys.exit(1)
     
     print()
+
+    # Mostrar celdas seleccionadas
+    mostrar_celdas_seleccionadas(resultados)
+
     
     # Paso 2: Calcular puntuaciones directas
     print("Paso 2: Calculando puntuaciones directas...")

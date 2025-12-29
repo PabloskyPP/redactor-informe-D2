@@ -325,3 +325,16 @@ def obtener_resumen_indices(resultados):
     lineas.append("=" * 70)
     
     return "\n".join(lineas)
+
+
+def mostrar_celdas_seleccionadas(resultados):
+    """
+    Muestra en la terminal las celdas seleccionadas.
+
+    Args:
+        resultados: Dict devuelto por calcular_puntuaciones_directas
+    """
+    celdas = obtener_celdas_seleccionadas(resultados)
+    print("Celdas seleccionadas:")
+    for celda in sorted(celdas):
+        print(f"  Fila: {celda[0]}, Columna: {celda[1]}")
