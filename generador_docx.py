@@ -217,7 +217,7 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # ========================================================================
     
     titulo_resumen = doc.add_paragraph()
-    run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre=nombre))
+    run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre_completo=nombre_completo))
     run.bold = True
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio

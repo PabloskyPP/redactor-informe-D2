@@ -40,10 +40,6 @@ def main():
         sys.exit(1)
     
     print()
-
-    # Mostrar celdas seleccionadas
-    mostrar_celdas_seleccionadas(resultados)
-
     
     # Paso 2: Calcular puntuaciones directas
     print("Paso 2: Calculando puntuaciones directas...")
@@ -59,6 +55,10 @@ def main():
         print(f"    TR max: {resultados['TR_max']}")
         print(f"    TR min: {resultados['TR_min']}")
         print(f"    VAR: {resultados['VAR']}")
+        
+        # Mostrar celdas seleccionadas
+        print()
+        mostrar_celdas_seleccionadas(resultados)
     except Exception as e:
         print(f"   X Error al calcular puntuaciones: {e}")
         sys.exit(1)
