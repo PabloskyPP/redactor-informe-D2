@@ -275,7 +275,7 @@ def dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height):
 
 def dibujar_puntos_seleccionados(draw, resultados, img_width, img_height):
     """
-    Dibuja puntos negros en las posiciones donde selected != 'FALSO'
+    Dibuja puntos negros en las posiciones donde selected == True
     
     Esta función utiliza la estructura explícita de celdas seleccionadas 
     proporcionada por lector_datos para un acceso eficiente y claro.
@@ -318,7 +318,7 @@ def dibujar_puntos_seleccionados(draw, resultados, img_width, img_height):
         if datos_d2 is None:
             return puntos_por_fila
             
-        df_seleccionados = datos_d2[datos_d2['selected'] != 'FALSO'].copy()
+        df_seleccionados = datos_d2[datos_d2['selected'] == True].copy()
         
         for _, fila in df_seleccionados.iterrows():
             row = int(fila['row'])
