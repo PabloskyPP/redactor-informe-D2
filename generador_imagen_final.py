@@ -4,13 +4,13 @@ Módulo para generar la imagen final grafico_D2_final.png con superposiciones gr
 Este módulo toma como base grafico_D2.png y genera una versión final con:
 - Textos de puntuaciones globales (TR_total, TA_total, O_total, C_total, TOT, CON, VAR, TR_max, TR_min, E_total)
 - Cuadros de texto por fila para cada índice (TR, TA, O, C)
-- Puntos negros en posiciones donde selected != 'FALSO' (items seleccionados)
+- Puntos negros en posiciones donde selected == True (items seleccionados)
 - Líneas conectando últimos puntos de filas consecutivas
 
 El módulo utiliza las estructuras explícitas de datos proporcionadas por lector_datos
 para identificar celdas seleccionadas de forma clara y eficiente.
 
-Nota: El Excel usa el valor 'FALSO' en español, no 'FALSE'
+Nota: El Excel usa valores booleanos True/False en la columna 'selected'
 """
 
 import os  # Módulo para operaciones del sistema de archivos
@@ -411,7 +411,7 @@ def generar_imagen_final(resultados, datos_d2, ruta_grafico_base='grafico_D2.png
         # 4. Dibujar cuadros de texto por fila
         dibujar_cuadros_texto_por_fila(draw, resultados, img_width, img_height)
 
-        # 5. Dibujar puntos donde selected != FALSO (usa estructura explícita de celdas)
+        # 5. Dibujar puntos donde selected == True (usa estructura explícita de celdas)
         puntos_por_fila = dibujar_puntos_seleccionados(draw, resultados, img_width, img_height)
 
         # 6. Conectar puntos entre filas

@@ -169,7 +169,7 @@ def calcular_puntuaciones_directas(datos):
         TA = len(df_row[(df_row['target'] == 'si') & (df_row['selected'] == True)])
         resultados['TA_por_fila'].append(TA)
         
-        # O: casos después del último selected == True con target='si' y selected==False
+        # O: casos después del último selected == True con target='si' y selected == False
         if len(df_seleccionados) > 0:
             ultimo_letter_num = df_seleccionados['letter_num'].max()
             df_posteriores = df_row[df_row['letter_num'] <= ultimo_letter_num]
