@@ -80,7 +80,7 @@ def identificar_celdas_seleccionadas(df):
         column = int(fila['letter_num'])
         celda = (row, column)
         
-        if fila['selected'] != 'FALSO':
+        if fila['selected'] == True:
             seleccionadas.add(celda)
         else:
             no_seleccionadas.add(celda)
@@ -157,30 +157,30 @@ def calcular_puntuaciones_directas(datos):
     for row in rows:
         df_row = df[df['row'] == row]
         
-        # TR: letter_num del último elemento con selected != FALSO
-        df_seleccionados = df_row[df_row['selected'] != 'FALSO']
+        # TR: letter_num del último elemento con selected == True
+        df_seleccionados = df_row[df_row['selected'] == True]
         if len(df_seleccionados) > 0:
             TR = df_seleccionados['letter_num'].max()
         else:
             TR = 0
         resultados['TR_por_fila'].append(TR)
         
-        # TA: casos con target='si' y selected != 'FALSO'
-        TA = len(df_row[(df_row['target'] == 'si') & (df_row['selected'] != 'FALSO')])
+        # TA: casos con target='si' y selected == True
+        TA = len(df_row[(df_row['target'] == 'si') & (df_row['selected'] == True)])
         resultados['TA_por_fila'].append(TA)
         
-        # O: casos después del último selected != FALSO con target='si' y selected='FALSO'
+        # O: casos después del último selected == True con target='si' y selected == False
         if len(df_seleccionados) > 0:
             ultimo_letter_num = df_seleccionados['letter_num'].max()
             df_posteriores = df_row[df_row['letter_num'] <= ultimo_letter_num]
             O = len(df_posteriores[(df_posteriores['target'] == 'si') & 
-                                   (df_posteriores['selected'] == 'FALSO')])
+                                   (df_posteriores['selected'] == False)])
         else:
             O = 0
         resultados['O_por_fila'].append(O)
         
-        # C: casos con target='no' y selected != 'FALSO'
-        C = len(df_row[(df_row['target'] == 'no') & (df_row['selected'] != 'FALSO')])
+        # C: casos con target='no' y selected == True
+        C = len(df_row[(df_row['target'] == 'no') & (df_row['selected'] == True)])
         resultados['C_por_fila'].append(C)
         
         # Añadir índices a la estructura explícita por fila
