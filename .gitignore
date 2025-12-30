@@ -37,7 +37,6 @@ env/
 Thumbs.db
 
 # Test files
-*.xlsx
 *.docx
 !grafico_D2.png
 
