@@ -49,14 +49,14 @@ POSICIONES_TOTALES = {
     'O_total': (139, 511),  # 
     'O_total2': (721, 512),  # 
     'C_total': (171, 511), 
-    'C_total2': (329, 511),  #381
+    'C_total2': (327, 511),  #381
     'C_total3': (743, 512),  
     'TOT_total2': (67, 510),  # Hay que calcular y declarar este y siguientes índices
-    'CON_total2': (248, 511), 
-    'VAR_total': (430, 510),   
-    'TR_min': (468, 510),  
-    'TR_max': (500, 510),  
-    'E_total2': (773, 512), 
+    'CON_total2': (254, 511), 
+    'VAR_total': (428, 510),   
+    'TR_min': (465, 510),  
+    'TR_max': (494, 510),  
+    'E_total2': (774, 512), 
 }
 
 # Tamaño de fuente para textos
@@ -153,9 +153,9 @@ def obtener_posicion_cuadro_texto_fila(row, indice, img_width, img_height):
 
     # Offset horizontal según el índice
     offsets = {
-        'TR': img_width - 140,  # Offset para TR
-        'TA': img_width - 100,  # Offset para TA
-        'O': img_width - 60,  # Offset para O
+        'TR': img_width - 123,  # Offset para TR
+        'TA': img_width - 98,  # Offset para TA
+        'O': img_width - 71,  # Offset para O
         'C': img_width - 50,  # Offset para C
     }
 
