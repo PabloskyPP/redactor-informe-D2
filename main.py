@@ -1,5 +1,5 @@
 """
-Programa principal para generar informe del test D2
+Programa principal para generar informe del test Raven
 """
 import sys
 import os
@@ -14,15 +14,14 @@ def main():
     Función principal que ejecuta todo el proceso
     """
     # Configuración
-    RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\pablo prada_1.xlsx"
+    RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\Pablo Prada Campello.xlsx"
     script_dir = os.path.dirname(RUTA_EXCEL)
-    RUTA_SALIDA = os.path.join(script_dir, "Informe_D2_Resultado.docx")
-    RUTA_IMAGEN_FINAL = os.path.join(script_dir, "grafico_D2_final.png")
-    RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
+    RUTA_SALIDA = os.path.join(script_dir, "Informe_Raven_Resultado.docx")
+    RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_Raven_Resultado.docx"
     NOMBRE_CASO = "pablo"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
-    print("GENERADOR DE INFORME TEST D2 - ATENCIÓN")
+    print("GENERADOR DE INFORME TEST RAVEN")
     print("=" * 70)
     print()
     
@@ -45,57 +44,24 @@ def main():
     print("Paso 2: Calculando puntuaciones directas...")
     try:
         resultados = calcular_puntuaciones_directas(datos)
-        print(f"    TR total: {resultados['TR_total']}")
-        print(f"    TA total: {resultados['TA_total']}")
-        print(f"    O total: {resultados['O_total']}")
-        print(f"    C total: {resultados['C_total']}")
-        print(f"    E total: {resultados['E_total']}")
-        print(f"    TOT: {resultados['TOT']}")
-        print(f"    CON: {resultados['CON']}")
-        print(f"    TR max: {resultados['TR_max']}")
-        print(f"    TR min: {resultados['TR_min']}")
-        print(f"    VAR: {resultados['VAR']}")
+        print(f"    Puntuación directa A: {resultados['PD_A']}")
+        print(f"    Puntuación directa B: {resultados['PD_B']}")
+        print(f"    Puntuación directa C: {resultados['PD_C']}")
+        print(f"    Puntuación directa D: {resultados['PD_D']}")
+        print(f"    Puntuación directa E: {resultados['PD_E']}")
+        print(f"    Puntuación directa total: {resultados['PD_total']}")
+        print(f"    Discrepancia: {resultados['Discrepancia']}")
     except Exception as e:
         print(f"   X Error al calcular puntuaciones: {e}")
         sys.exit(1)
     
-    # Mostrar celdas seleccionadas
-    try:
-        print()
-        mostrar_celdas_seleccionadas(resultados)
-    except Exception as e:
-        print(f"   X Error al mostrar celdas seleccionadas: {e}")
-    
-    print()
-    
-    # Paso 3: Generar imagen final grafico_D2_final.png
-    print("Paso 3: Generando imagen final con superposiciones...")
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        ruta_base = os.path.join(script_dir, 'grafico_D2.png')
-        ruta_final = os.path.join(script_dir, 'grafico_D2_final.png')
-        
-        exito = generar_imagen_final(resultados, resultados['datos_d2'], ruta_base, ruta_final)
-        if exito:
-            print(f"    Imagen final generada correctamente: grafico_D2_final.png")
-        else:
-            print(f"   X Error al generar la imagen final")
-            sys.exit(1)
-    except Exception as e:
-        print(f"   X Error al generar la imagen final: {e}")
-        sys.exit(1)
-    
-    print()
     
     # Paso 4: Obtener puntuaciones típicas (clasificaciones)
     print("Paso 4: Obteniendo puntuaciones típicas (baremos)...")
     try:
         clasificaciones = obtener_puntuaciones_tipicas(resultados)
-        print(f"    TR: {clasificaciones['TR']}")
-        print(f"    O: {clasificaciones['O']}")
-        print(f"    C: {clasificaciones['C']}")
-        print(f"    CON: {clasificaciones['CON']}")
-        print(f"    VAR: {clasificaciones['VAR']}")
+
+        print(f"    Percentil: {resultados['Percentil']}")
     except Exception as e:
         print(f"   X Error al obtener clasificaciones: {e}")
         sys.exit(1)

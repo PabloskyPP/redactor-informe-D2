@@ -10,9 +10,7 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from PIL import Image
 from textos import (
-    PARRAFOS_FIJOS, PARRAFOS_VAR, PARRAFOS_TR, 
-    PARRAFOS_O, PARRAFOS_C, PARRAFOS_CON,
-    SINTESIS_INTRO, obtener_parrafo_cierre, normalizar_nivel
+    PARRAFOS_FIJOS, TEXTO_DISCREPANCIA_NO_SIGNIFICATIVA, TEXTO_DISCREPANCIA_SIGNIFICATIVA, PARRAFOS_PD
 )
 
 def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
@@ -25,7 +23,7 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
         datos: Diccionario con datos generales (edad, fecha_aplicacion, etc.)
     """
     # Título
-    titulo = doc.add_heading('D2, TEST DE ATENCIÓN', 0)
+    titulo = doc.add_heading('TEST DE MATRICES PROGRESIVAS DE RAVEN', 0)
     titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     # Aumentar tamaño de fuente del título
     for run in titulo.runs:
@@ -64,7 +62,7 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
     # Nota confidencial
     nota = doc.add_paragraph()
     nota.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    nota_run = nota.add_run(f"Este es un informe de evaluación cognitiva, obtenido a partir del rendimiento de {nombre_completo} en la prueba D2, test de atención.")
+    nota_run = nota.add_run(f"Este es un informe de evaluación cognitiva, obtenido a partir del rendimiento de {nombre_completo} en la prueba Matrices Progresivas de Raven Escala Estándar.")
     nota.add_run("\nInforme confidencial de uso profesional y educativo")
     nota_run.italic = True
     nota_run.font.size = Pt(12)
@@ -122,41 +120,11 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # VARIABLES DEL TEST (Descripción técnica)
     # ========================================================================
     doc.add_paragraph("A continuación, se presenta una relación de las puntuaciones o variables de la prueba; se especifica cómo se obtienen y se dan algunas características de su significación psicológica y psicométrica:")
-    
-    # TR
-    p_tr = doc.add_paragraph()
-    p_tr.add_run("TR. ").bold = True
-    p_tr.add_run("Esta puntuación alude al número total de elementos procesados o intentados en todo el test. TR es una medida cuantitativa del conjunto total de elementos que se procesaron, tanto los relevantes como los irrelevantes. Es una medida muy fiable y con una distribución normal de la atención (selectiva y sostenida), de la velocidad de procesamiento, de la cantidad de trabajo realizado y de la motivación.")
-    
-    # E
-    p_e = doc.add_paragraph()
-    p_e.add_run("E. ").bold = True
-    p_e.add_run("Esta puntuación directa E (errores) es la suma de todas las equivocaciones; incluye los errores de omisión (O) y los menos frecuentes errores de comisión (C). Los errores O se dan cuando no se marcan los elementos relevantes. Los errores C se producen cuando se marcan elementos irrelevantes; y la flexibilidad cognitiva. Estos errores son una medida del control atencional, el cumplimiento de una regla, la precisión de la búsqueda visual, la flexibilidad cognitiva y la calidad de la actuación.")
-    
-    # TOT
-    p_tot = doc.add_paragraph()
-    p_tot.add_run("TOT. ").bold = True
-    p_tot.add_run("Es el número de elementos procesados (TR) menos el número total de errores E cometidos (O + C). Es una medida fiable y con distribución normal de control atencional e inhibitorio y de la relación entre la velocidad y precisión de los sujetos.")
-    
-    # TA
-    p_ta = doc.add_paragraph()
-    p_ta.add_run("TA. ").bold = True
-    p_ta.add_run("Es el número total de aciertos, las veces que la letra d tenía dos rayas y fue marcada por el sujeto.")
-    
-    # CON
-    p_con = doc.add_paragraph()
-    p_con.add_run("CON. ").bold = True
-    p_con.add_run("Esta medida (Concentración) se deriva del número de elementos relevantes correctamente marcados (TA) menos el número de comisiones (C).")
-    
-    # VAR
-    p_var = doc.add_paragraph()
-    p_var.add_run("VAR. ").bold = True
-    p_var.add_run("Esta puntuación de variación viene dada por la diferencia entre la serie de mayor y menor productividad (TR) de las 14 líneas de test.")
-    
-    doc.add_paragraph()  # Espacio
+
+
     
     # ========================================================================
-    # INSERTAR GRÁFICO D2
+    # INSERTAR IMAGEN G1 baremos
     # ========================================================================
     
     # Título de resultados
@@ -167,10 +135,18 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio
 
+    # Introducción a la imagen de baremos
+    subtitulo = doc.add_paragraph()
+    run = subtitulo.add_run("texto_imagen_baremos")
+    run.bold = True
+    run.font.size = Pt(12)
+    
+    doc.add_paragraph(PARRAFOS_FIJOS['texto_imagen_baremos'])
+
     # Ruta al gráfico final (en el mismo directorio que el script)
     # Ahora usamos grafico_D2_final.png que incluye todas las superposiciones
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    grafico_path = os.path.join(script_dir, 'grafico_D2_final.png')
+    grafico_path = os.path.join(script_dir, 'baremos_Raven.png')
     
     if os.path.exists(grafico_path):
         # Añadir el gráfico con dimensionamiento mejorado
@@ -210,12 +186,15 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
             run_img = paragraph_img.add_run()
             run_img.add_picture(grafico_path, width=Inches(7))
     
-    doc.add_paragraph()  # Espacio
-
-    # ========================================================================
-    # SALTO DE PÁGINA Y RESULTADOS
-    # ========================================================================
+    # Tabla calculo índices de discrepancia
+    subtitulo = doc.add_paragraph()
+    run = subtitulo.add_run("texto_tabla_discrepancia")
+    run.bold = True
+    run.font.size = Pt(12)
     
+    doc.add_paragraph(PARRAFOS_FIJOS['texto_tabla_discrepancia'])
+
+
     titulo_resumen = doc.add_paragraph()
     run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre_completo=nombre_completo))
     run.bold = True
