@@ -194,151 +194,42 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     
     doc.add_paragraph(PARRAFOS_FIJOS['texto_tabla_discrepancia'])
 
-
-    titulo_resumen = doc.add_paragraph()
-    run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre_completo=nombre_completo))
-    run.bold = True
-    run.font.size = Pt(14)
-    doc.add_paragraph()  # Espacio
-    
-    # Tabla con puntuaciones directas
+    # Tabla con puntuaciones directas obtenidas y esperadas y resto de ambas como índice de discrepancia
     tabla = doc.add_table(rows=3, cols=8)
     tabla.style = 'Light Grid Accent 1'
-    
-    # Encabezados
-    headers = ['TR', 'TA', 'O', 'C', 'E', 'TOT', 'CON', 'VAR']
-    for i, header in enumerate(headers):
-        cell = tabla.rows[0].cells[i]
-        cell.text = header
-        cell.paragraphs[0].runs[0].bold = True
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    # Puntuaciones directas
-    valores = [
-        resultados['TR_total'],
-        resultados['TA_total'],
-        resultados['O_total'],
-        resultados['C_total'],
-        resultados['E_total'],
-        resultados['TOT'],
-        resultados['CON'],
-        resultados['VAR']
-    ]
-    for i, valor in enumerate(valores):
-        cell = tabla.rows[1].cells[i]
-        cell.text = str(valor)
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    # Clasificaciones (PT)
-    clasificaciones_texto = [
-        clasificaciones['TR'],
-        clasificaciones['TA'],
-        clasificaciones['O'],
-        clasificaciones['C'],
-        '-',
-        clasificaciones['TOT'],
-        clasificaciones['CON'],
-        clasificaciones['VAR']
-    ]
-    for i, clasif in enumerate(clasificaciones_texto):
-        cell = tabla.rows[2].cells[i]
-        cell.text = clasif
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    doc.add_paragraph()  # Espacio
-    
-    # ========================================================================
-    # RESUMEN DEL RENDIMIENTO
-    # ========================================================================
-    
-    # Párrafos fijos
-    doc.add_paragraph(PARRAFOS_FIJOS['rendimiento_general'].format(nombre=nombre))
-    doc.add_paragraph()  # Espacio
-    
+
+    # Encabezado de párrafo para el índice de discrepancia
+    encabezado_discrepancia = doc.add_paragraph()
+    run = encabezado_discrepancia.add_run("Resultado respecto al índice de discrepancia")
+    run.bold = True
+    run.font.size = Pt(12)
+
     # ========================================================================
     # PÁRRAFOS CONDICIONALES
     # ========================================================================
     
-    # VELOCIDAD DE PROCESAMIENTO
-    p_tr_titulo = doc.add_paragraph()
-    run = p_tr_titulo.add_run("🔹 Velocidad de procesamiento (TR)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    tr_nivel = normalizar_nivel(clasificaciones['TR'])
-    
-    doc.add_paragraph(PARRAFOS_TR[tr_nivel])
-    
-    # ERRORES DE OMISIÓN
-    p_o_titulo = doc.add_paragraph()
-    run = p_o_titulo.add_run("🔹 Precisión y errores de omisión (O)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    o_nivel = normalizar_nivel(clasificaciones['O'])
-    
-    doc.add_paragraph(PARRAFOS_O[o_nivel])
-    
-    # ERRORES DE COMISIÓN
-    p_c_titulo = doc.add_paragraph()
-    run = p_c_titulo.add_run("🔹 Errores de comisión (C)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    c_nivel = normalizar_nivel(clasificaciones['C'])
-    
-    doc.add_paragraph(PARRAFOS_C[c_nivel])
-    
-    # CONCENTRACIÓN
-    p_con_titulo = doc.add_paragraph()
-    run = p_con_titulo.add_run("🔹 Concentración (CON)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    con_nivel = normalizar_nivel(clasificaciones['CON'])
-    
-    doc.add_paragraph(PARRAFOS_CON[con_nivel])
-
-        # VARIABILIDAD
-    p_var_titulo = doc.add_paragraph()
-    run = p_var_titulo.add_run("🔹 Variabilidad del rendimiento (VAR)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Seleccionar párrafo VAR según condición especial
-    var_key = clasificaciones['VAR']
-    if clasificaciones.get('VAR_especial', False) and var_key in ['alto', 'muy alto']:
-        var_key = var_key + '_especial'
-    
-    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre))
-
+    # Párrafo conidional según discrepancia significativa o no
+    if resultados.get('Discrepancia_significativa', False):
+        doc.add_paragraph(TEXTO_DISCREPANCIA_SIGNIFICATIVA.format(nombre=nombre))
+    else:
+        doc.add_paragraph(TEXTO_DISCREPANCIA_NO_SIGNIFICATIVA.format(nombre=nombre))
     doc.add_paragraph()  # Espacio
-    
+
     # ========================================================================
-    # SÍNTESIS FINAL
-    # ========================================================================
-    p_sintesis_titulo = doc.add_paragraph()
-    run = p_sintesis_titulo.add_run("🔹 Síntesis del perfil atencional")
+    # DESCRIPCIÓN DE PUNTUACIONES DIRECTAS
+
+    # Encabezado de párrafo para el índice de discrepancia
+    encabezado_discrepancia = doc.add_paragraph()
+    run = encabezado_discrepancia.add_run("Resultado respecto a la puntuación directa de la prueba")
     run.bold = True
-    run.font.size = Pt(11)
+    run.font.size = Pt(12)
+
+    p_pd_titulo = doc.add_paragraph()
+    run = p_pd_titulo.add_run("🔹 Puntuaciones directas (PD)"
+                            )
+    run.bold = True
+    run.font.size = Pt(12) 
     
-    doc.add_paragraph(SINTESIS_INTRO.format(nombre=nombre))
-    
-    # Párrafo de cierre según combinación de clasificaciones
-    parrafo_cierre = obtener_parrafo_cierre(
-        clasificaciones['TR'],
-        clasificaciones['O'],
-        clasificaciones['C'],
-        clasificaciones['CON'],
-        clasificaciones['VAR'],
-        clasificaciones.get('VAR_especial', False),
-        nombre
-    )
-    doc.add_paragraph(parrafo_cierre)
     
     return doc
 
