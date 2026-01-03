@@ -269,11 +269,11 @@ def clasificar_VAR(VAR, edad):
     NOTA: Interpretación especial (baja variabilidad = estable = mejor)
     
     Niveles:
-    - 'muy bajo': Pc 80-100 (muy estable)
-    - 'bajo': Pc 60-80 (estable)
+    - 'muy bajo': Pc < 20 (muy estable)
+    - 'bajo': Pc 20-40  (estable)
     - 'normal': Pc 40-60 (variabilidad normal)
-    - 'alto': Pc 20-40 (variable)
-    - 'muy alto': Pc < 20 (muy variable)
+    - 'alto': Pc 60-80 (variable)
+    - 'muy alto': Pc 80-100(muy variable)
     """
     baremos = {
         'A1_8_10': {'pc20': 10, 'pc40': 12, 'pc60': 15, 'pc80': 19},
@@ -282,7 +282,7 @@ def clasificar_VAR(VAR, edad):
         'A4_15_16': {'pc20': 12, 'pc40': 15, 'pc60': 19, 'pc80': 24},
         'A5_17_18': {'pc20': 16, 'pc40': 20, 'pc60': 24, 'pc80': 26},
         'A6_19_23': {'pc20': 10, 'pc40': 12, 'pc60': 14, 'pc80': 17},
-        'A7_24_29': {'pc20': 15, 'pc40': 23, 'pc60': 25, 'pc80': 29},
+        'A7_24_29': {'pc20': 9, 'pc40': 12, 'pc60': 15, 'pc80': 17},
         'A8_30_39': {'pc20': 10, 'pc40': 13, 'pc60': 16, 'pc80': 19},
         'A9_40_mas': {'pc20': 6, 'pc40': 14, 'pc60': 19, 'pc80': 24}
     }
