@@ -33,7 +33,6 @@ PARRAFOS_FIJOS = {
 # PÁRRAFOS CONDICIONALES SEGÚN PUNTUACIONES
 # ============================================================================
 
-# VAR - Variabilidad del rendimiento
 # Textos compartidos para evitar duplicación
 TEXTO_DISCREPANCIA_SIGNIFICATIVA = """{Nombre} obtuvo un índice de discrepancia superior a 2 en la(s) escala(s): {escala_discrepante}. Esto señala que {Nombre} se ha beneficiado significativamente de aciertos aleatorios en problemas de escalas avanzadas. Esto indica cierta aleatoriedad en la respuesta de {Nombre} por lo que sus resultados en esta prueba y siguiente interpretación de su capacidad de razonamiento están distorsionados, más posiblemente siendo más positivos de los que realmente corresponde. Y por esto, hay que considerar con cautela los resultados a continuación expuestos."""
 
