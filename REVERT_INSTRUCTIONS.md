@@ -4,6 +4,14 @@
 
 El repositorio necesita ser revertido al commit `774620ce1630a6489fb1af9b44f2a3bbe248d2f8` del 2 de enero de 2026.
 
+## Preparación del Script
+
+Si deseas usar el script automatizado, primero asegúrate de que tenga permisos de ejecución:
+
+```bash
+chmod +x revert_to_774620ce.sh
+```
+
 ## Limitaciones Técnicas Encontradas
 
 Durante el intento de revertir automáticamente el repositorio, se encontraron las siguientes limitaciones:

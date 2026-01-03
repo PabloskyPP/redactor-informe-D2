@@ -26,9 +26,8 @@ git push --force origin main
 git rev-parse HEAD
 # Debe mostrar: 774620ce1630a6489fb1af9b44f2a3bbe248d2f8
 
-# Verificar que no hay el archivo incorrecto
-ls -la "et --hard bf36603"
-# Debe mostrar: No such file or directory
+# Verificar que no existe el archivo incorrecto
+test ! -f "et --hard bf36603" && echo "OK: Archivo no existe" || echo "ERROR: Archivo todavía existe"
 ```
 
 ## En Caso de Error

@@ -2,11 +2,12 @@
 # Script para revertir el repositorio al commit 774620ce1630a6489fb1af9b44f2a3bbe248d2f8
 #
 # USO: ./revert_to_774620ce.sh
+# NOTA: Si el script no es ejecutable, usa: chmod +x revert_to_774620ce.sh
 #
 # ADVERTENCIA: Este script usa 'git reset --hard' y 'git push --force'
 # Asegúrate de entender lo que hace antes de ejecutarlo.
 
-set -e  # Salir si hay algún error
+set -e  # Exit on any error
 
 # Colores para output
 RED='\033[0;31m'
