@@ -58,14 +58,21 @@ HOJA 1: "info"
 | 25  |
 
 
-HOJA 2: "Ravens Matrices"
+HOJA 2: "D2"
 ------------
-| Ensayo | Respuesta correcta | Respuesta dada |
-|--------|--------------------|----------------|
-| A1     |  2                  | 7             |
-| A2     | 1                   | 1             |
-| A3     | 3                   | 8             |
-| ...    | ...                 | ...           |
+| row | letter_number | target | selected |
+|-----|---------------|--------|----------|
+| 1   | 1             | no     | FALSE    |
+| 1   | 2             | si     | TRUE     |
+| 1   | 3             | si     | FALSE    |
+| ... | ...           | ...    | ...      |
+
+
+Columnas requeridas:
+- row: Número de fila (1 a 14)
+- letter_number: Posición de letra (1 a 47)
+- target: 'si' si es d con 2 rayas, 'no' si no lo es
+- selected: 'TRUE' si fue marcado, 'FALSE' si no
 
 
 ✅ RESULTADO
@@ -83,9 +90,19 @@ El programa generará un informe profesional en Word (.docx) que incluye:
 🔍 PUNTUACIONES CALCULADAS
 ===========================
 
-Directa (PD)
-Típica (PT)
-Discrepancia
+Directas (PD):
+- TR: Total de elementos procesados
+- TA: Total de aciertos
+- O: Errores de omisión
+- C: Errores de comisión
+- E: Total de errores (O + C)
+- TOT: TR - E
+- CON: TA - C
+- VAR: Variabilidad entre filas
+
+Típicas (PT):
+- Clasificación según baremos por edad
+- Categorías: bajo, normal, alto
 
 
 🆘 SOLUCIÓN DE PROBLEMAS
@@ -116,11 +133,11 @@ Para soporte o dudas sobre el programa, contacta al desarrollador.
 ===========
 
 Basado en:
-- Test de Matrices Progresivas de Raven (Raven, Court and Raven, 2001):
-- Baremos del manual Escala General (SPM) 3ºEdición
+- Test D2 de Atención (Brickenkamp & Zillmer)
+- Baremos del manual oficial TEA Ediciones
 - Normas de aplicación y corrección estándar
 
 
 ═══════════════════════════════════════════════════════════════
-© 2024 - Generador automático de informes Test Raven Matrices Progresivas
+© 2024 - Generador automático de informes Test D2
 ═══════════════════════════════════════════════════════════════
