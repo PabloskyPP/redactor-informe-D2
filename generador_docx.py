@@ -10,9 +10,7 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from PIL import Image
 from textos import (
-    PARRAFOS_FIJOS, PARRAFOS_VAR, PARRAFOS_TR, 
-    PARRAFOS_O, PARRAFOS_C, PARRAFOS_CON,
-    SINTESIS_INTRO, obtener_parrafo_cierre, normalizar_nivel
+    PARRAFOS_FIJOS, TEXTO_DISCREPANCIA_NO_SIGNIFICATIVA, TEXTO_DISCREPANCIA_SIGNIFICATIVA, PARRAFOS_PD
 )
 
 def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
@@ -25,7 +23,7 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
         datos: Diccionario con datos generales (edad, fecha_aplicacion, etc.)
     """
     # Título
-    titulo = doc.add_heading('D2, TEST DE ATENCIÓN', 0)
+    titulo = doc.add_heading('TEST DE MATRICES PROGRESIVAS DE RAVEN', 0)
     titulo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     # Aumentar tamaño de fuente del título
     for run in titulo.runs:
@@ -64,7 +62,7 @@ def agregar_portada(doc: Document, nombre_completo: str, datos: dict) -> None:
     # Nota confidencial
     nota = doc.add_paragraph()
     nota.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    nota_run = nota.add_run(f"Este es un informe de evaluación cognitiva, obtenido a partir del rendimiento de {nombre_completo} en la prueba D2, test de atención.")
+    nota_run = nota.add_run(f"Este es un informe de evaluación cognitiva, obtenido a partir del rendimiento de {nombre_completo} en la prueba Matrices Progresivas de Raven Escala Estándar.")
     nota.add_run("\nInforme confidencial de uso profesional y educativo")
     nota_run.italic = True
     nota_run.font.size = Pt(12)
@@ -122,41 +120,11 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # VARIABLES DEL TEST (Descripción técnica)
     # ========================================================================
     doc.add_paragraph("A continuación, se presenta una relación de las puntuaciones o variables de la prueba; se especifica cómo se obtienen y se dan algunas características de su significación psicológica y psicométrica:")
-    
-    # TR
-    p_tr = doc.add_paragraph()
-    p_tr.add_run("TR. ").bold = True
-    p_tr.add_run("Esta puntuación alude al número total de elementos procesados o intentados en todo el test. TR es una medida cuantitativa del conjunto total de elementos que se procesaron, tanto los relevantes como los irrelevantes. Es una medida muy fiable y con una distribución normal de la atención (selectiva y sostenida), de la velocidad de procesamiento, de la cantidad de trabajo realizado y de la motivación.")
-    
-    # E
-    p_e = doc.add_paragraph()
-    p_e.add_run("E. ").bold = True
-    p_e.add_run("Esta puntuación directa E (errores) es la suma de todas las equivocaciones; incluye los errores de omisión (O) y los menos frecuentes errores de comisión (C). Los errores O se dan cuando no se marcan los elementos relevantes. Los errores C se producen cuando se marcan elementos irrelevantes; y la flexibilidad cognitiva. Estos errores son una medida del control atencional, el cumplimiento de una regla, la precisión de la búsqueda visual, la flexibilidad cognitiva y la calidad de la actuación.")
-    
-    # TOT
-    p_tot = doc.add_paragraph()
-    p_tot.add_run("TOT. ").bold = True
-    p_tot.add_run("Es el número de elementos procesados (TR) menos el número total de errores E cometidos (O + C). Es una medida fiable y con distribución normal de control atencional e inhibitorio y de la relación entre la velocidad y precisión de los sujetos.")
-    
-    # TA
-    p_ta = doc.add_paragraph()
-    p_ta.add_run("TA. ").bold = True
-    p_ta.add_run("Es el número total de aciertos, las veces que la letra d tenía dos rayas y fue marcada por el sujeto.")
-    
-    # CON
-    p_con = doc.add_paragraph()
-    p_con.add_run("CON. ").bold = True
-    p_con.add_run("Esta medida (Concentración) se deriva del número de elementos relevantes correctamente marcados (TA) menos el número de comisiones (C).")
-    
-    # VAR
-    p_var = doc.add_paragraph()
-    p_var.add_run("VAR. ").bold = True
-    p_var.add_run("Esta puntuación de variación viene dada por la diferencia entre la serie de mayor y menor productividad (TR) de las 14 líneas de test.")
-    
-    doc.add_paragraph()  # Espacio
+
+
     
     # ========================================================================
-    # INSERTAR GRÁFICO D2
+    # INSERTAR IMAGEN G1 baremos
     # ========================================================================
     
     # Título de resultados
@@ -167,10 +135,18 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     run.font.size = Pt(14)
     doc.add_paragraph()  # Espacio
 
+    # Introducción a la imagen de baremos
+    subtitulo = doc.add_paragraph()
+    run = subtitulo.add_run("texto_imagen_baremos")
+    run.bold = True
+    run.font.size = Pt(12)
+    
+    doc.add_paragraph(PARRAFOS_FIJOS['texto_imagen_baremos'])
+
     # Ruta al gráfico final (en el mismo directorio que el script)
     # Ahora usamos grafico_D2_final.png que incluye todas las superposiciones
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    grafico_path = os.path.join(script_dir, 'grafico_D2_final.png')
+    grafico_path = os.path.join(script_dir, 'baremos_Raven.png')
     
     if os.path.exists(grafico_path):
         # Añadir el gráfico con dimensionamiento mejorado
@@ -210,156 +186,50 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
             run_img = paragraph_img.add_run()
             run_img.add_picture(grafico_path, width=Inches(7))
     
-    doc.add_paragraph()  # Espacio
-
-    # ========================================================================
-    # SALTO DE PÁGINA Y RESULTADOS
-    # ========================================================================
-    
-    titulo_resumen = doc.add_paragraph()
-    run = titulo_resumen.add_run(PARRAFOS_FIJOS['titulo_resumen'].format(nombre_completo=nombre_completo))
+    # Tabla calculo índices de discrepancia
+    subtitulo = doc.add_paragraph()
+    run = subtitulo.add_run("texto_tabla_discrepancia")
     run.bold = True
-    run.font.size = Pt(14)
-    doc.add_paragraph()  # Espacio
+    run.font.size = Pt(12)
     
-    # Tabla con puntuaciones directas
+    doc.add_paragraph(PARRAFOS_FIJOS['texto_tabla_discrepancia'])
+
+    # Tabla con puntuaciones directas obtenidas y esperadas y resto de ambas como índice de discrepancia
     tabla = doc.add_table(rows=3, cols=8)
     tabla.style = 'Light Grid Accent 1'
-    
-    # Encabezados
-    headers = ['TR', 'TA', 'O', 'C', 'E', 'TOT', 'CON', 'VAR']
-    for i, header in enumerate(headers):
-        cell = tabla.rows[0].cells[i]
-        cell.text = header
-        cell.paragraphs[0].runs[0].bold = True
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    # Puntuaciones directas
-    valores = [
-        resultados['TR_total'],
-        resultados['TA_total'],
-        resultados['O_total'],
-        resultados['C_total'],
-        resultados['E_total'],
-        resultados['TOT'],
-        resultados['CON'],
-        resultados['VAR']
-    ]
-    for i, valor in enumerate(valores):
-        cell = tabla.rows[1].cells[i]
-        cell.text = str(valor)
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    # Clasificaciones (PT)
-    clasificaciones_texto = [
-        clasificaciones['TR'],
-        clasificaciones['TA'],
-        clasificaciones['O'],
-        clasificaciones['C'],
-        '-',
-        clasificaciones['TOT'],
-        clasificaciones['CON'],
-        clasificaciones['VAR']
-    ]
-    for i, clasif in enumerate(clasificaciones_texto):
-        cell = tabla.rows[2].cells[i]
-        cell.text = clasif
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    
-    doc.add_paragraph()  # Espacio
-    
-    # ========================================================================
-    # RESUMEN DEL RENDIMIENTO
-    # ========================================================================
-    
-    # Párrafos fijos
-    doc.add_paragraph(PARRAFOS_FIJOS['rendimiento_general'].format(nombre=nombre))
-    doc.add_paragraph()  # Espacio
-    
+
+    # Encabezado de párrafo para el índice de discrepancia
+    encabezado_discrepancia = doc.add_paragraph()
+    run = encabezado_discrepancia.add_run("Resultado respecto al índice de discrepancia")
+    run.bold = True
+    run.font.size = Pt(12)
+
     # ========================================================================
     # PÁRRAFOS CONDICIONALES
     # ========================================================================
     
-    # VELOCIDAD DE PROCESAMIENTO
-    p_tr_titulo = doc.add_paragraph()
-    run = p_tr_titulo.add_run("🔹 Velocidad de procesamiento (TR)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    tr_nivel = normalizar_nivel(clasificaciones['TR'])
-    
-    doc.add_paragraph(PARRAFOS_TR[tr_nivel])
-    
-    # ERRORES DE OMISIÓN
-    p_o_titulo = doc.add_paragraph()
-    run = p_o_titulo.add_run("🔹 Precisión y errores de omisión (O)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    o_nivel = normalizar_nivel(clasificaciones['O'])
-    
-    doc.add_paragraph(PARRAFOS_O[o_nivel])
-    
-    # ERRORES DE COMISIÓN
-    p_c_titulo = doc.add_paragraph()
-    run = p_c_titulo.add_run("🔹 Errores de comisión (C)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    c_nivel = normalizar_nivel(clasificaciones['C'])
-    
-    doc.add_paragraph(PARRAFOS_C[c_nivel])
-    
-    # CONCENTRACIÓN
-    p_con_titulo = doc.add_paragraph()
-    run = p_con_titulo.add_run("🔹 Concentración (CON)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Normalizar nivel para selección de párrafo
-    con_nivel = normalizar_nivel(clasificaciones['CON'])
-    
-    doc.add_paragraph(PARRAFOS_CON[con_nivel])
-
-        # VARIABILIDAD
-    p_var_titulo = doc.add_paragraph()
-    run = p_var_titulo.add_run("🔹 Variabilidad del rendimiento (VAR)")
-    run.bold = True
-    run.font.size = Pt(11)
-    
-    # Seleccionar párrafo VAR según condición especial
-    var_key = clasificaciones['VAR']
-    if clasificaciones.get('VAR_especial', False) and var_key in ['alto', 'muy alto']:
-        var_key = var_key + '_especial'
-    
-    doc.add_paragraph(PARRAFOS_VAR[var_key].format(nombre=nombre))
-
+    # Párrafo conidional según discrepancia significativa o no
+    if resultados.get('Discrepancia_significativa', False):
+        doc.add_paragraph(TEXTO_DISCREPANCIA_SIGNIFICATIVA.format(nombre=nombre))
+    else:
+        doc.add_paragraph(TEXTO_DISCREPANCIA_NO_SIGNIFICATIVA.format(nombre=nombre))
     doc.add_paragraph()  # Espacio
-    
+
     # ========================================================================
-    # SÍNTESIS FINAL
-    # ========================================================================
-    p_sintesis_titulo = doc.add_paragraph()
-    run = p_sintesis_titulo.add_run("🔹 Síntesis del perfil atencional")
+    # DESCRIPCIÓN DE PUNTUACIONES DIRECTAS
+
+    # Encabezado de párrafo para el índice de discrepancia
+    encabezado_discrepancia = doc.add_paragraph()
+    run = encabezado_discrepancia.add_run("Resultado respecto a la puntuación directa de la prueba")
     run.bold = True
-    run.font.size = Pt(11)
+    run.font.size = Pt(12)
+
+    p_pd_titulo = doc.add_paragraph()
+    run = p_pd_titulo.add_run("🔹 Puntuaciones directas (PD)"
+                            )
+    run.bold = True
+    run.font.size = Pt(12) 
     
-    doc.add_paragraph(SINTESIS_INTRO.format(nombre=nombre))
-    
-    # Párrafo de cierre según combinación de clasificaciones
-    parrafo_cierre = obtener_parrafo_cierre(
-        clasificaciones['TR'],
-        clasificaciones['O'],
-        clasificaciones['C'],
-        clasificaciones['CON'],
-        clasificaciones['VAR'],
-        clasificaciones.get('VAR_especial', False),
-        nombre
-    )
-    doc.add_paragraph(parrafo_cierre)
     
     return doc
 
