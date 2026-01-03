@@ -30,12 +30,13 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# Verificar que el repositorio es el correcto
+# Verify that this is the correct repository
 REPO_URL=$(git remote get-url origin 2>/dev/null || echo "")
 if [[ ! "$REPO_URL" =~ "redactor-informe-D2" ]]; then
     echo -e "${RED}ERROR: Este no parece ser el repositorio correcto${NC}"
     echo "URL del remoto: $REPO_URL"
-    echo "Se esperaba un repositorio llamado 'redactor-informe-D2'"
+    echo "Se esperaba un repositorio que contenga 'redactor-informe-D2' en la URL"
+    echo ""
     read -p "¿Deseas continuar de todos modos? (s/N): " confirm
     if [[ ! "$confirm" =~ ^[sS]$ ]]; then
         echo "Operación cancelada"
@@ -72,17 +73,30 @@ git checkout main || {
 echo -e "${GREEN}✓ Checkout a main exitoso${NC}"
 echo ""
 
-# Paso 2: Fetch del remoto (intentar unshallow primero)
+# Step 2: Fetch from remote (try unshallow first, then regular fetch)
 echo "Paso 2: Descargando historial del remoto..."
-if git fetch --unshallow 2>/dev/null; then
-    echo -e "${GREEN}✓ Repositorio completo descargado${NC}"
+# Check if this is a shallow repository
+if [ -f .git/shallow ]; then
+    echo "Detectado repositorio shallow, descargando historial completo..."
+    if git fetch --unshallow; then
+        echo -e "${GREEN}✓ Historial completo descargado${NC}"
+    else
+        echo -e "${YELLOW}Advertencia: --unshallow falló, intentando fetch normal...${NC}"
+        if git fetch --all; then
+            echo -e "${GREEN}✓ Fetch exitoso${NC}"
+        else
+            echo -e "${RED}ERROR: No se pudo hacer fetch del remoto${NC}"
+            exit 1
+        fi
+    fi
 else
-    echo "Repositorio no es shallow, haciendo fetch normal..."
-    git fetch --all || {
+    echo "Repositorio completo detectado, haciendo fetch normal..."
+    if git fetch --all; then
+        echo -e "${GREEN}✓ Fetch exitoso${NC}"
+    else
         echo -e "${RED}ERROR: No se pudo hacer fetch del remoto${NC}"
         exit 1
-    }
-    echo -e "${GREEN}✓ Fetch exitoso${NC}"
+    fi
 fi
 echo ""
 
