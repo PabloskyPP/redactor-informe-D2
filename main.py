@@ -14,7 +14,7 @@ def main():
     Función principal que ejecuta todo el proceso
     """
     # Configuración
-    RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\pablo prada_1.xlsx"
+    RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\Pablo Prada Campello.xlsx"
     script_dir = os.path.dirname(RUTA_EXCEL)
     RUTA_SALIDA = os.path.join(script_dir, "Informe_D2_Resultado.docx")
     RUTA_IMAGEN_FINAL = os.path.join(script_dir, "grafico_D2_final.png")
