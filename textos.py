@@ -24,7 +24,6 @@ PARRAFOS_FIJOS = {
 # PÁRRAFOS CONDICIONALES SEGÚN PUNTUACIONES
 # ============================================================================
 
-# VAR - Variabilidad del rendimiento
 # Textos compartidos para evitar duplicación
 _VAR_ALTO_TEXTO = """{nombre} mostró un rendimiento muy variable entre su mejor y peor serie. Este dato puede indicar una falta de atención sostenida entre diferentes series, vinculada a dificultades para mantener la motivación y a una mayor facilidad para distraerse."""
 
