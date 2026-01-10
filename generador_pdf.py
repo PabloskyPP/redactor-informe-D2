@@ -9,11 +9,12 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from PIL import Image
+import sys
 
 
 def convertir_docx_a_pdf(ruta_docx, ruta_pdf):
     """
-    Convierte un archivo DOCX a PDF usando LibreOffice
+    Convierte un archivo DOCX a PDF usando Word (Windows) o LibreOffice
     
     Args:
         ruta_docx: Ruta al archivo DOCX
@@ -38,12 +39,57 @@ def convertir_docx_a_pdf(ruta_docx, ruta_pdf):
         # Crear directorio de salida si no existe
         os.makedirs(directorio_salida, exist_ok=True)
         
-        # Usar LibreOffice para convertir DOCX a PDF
-        # --headless: ejecutar sin interfaz gráfica
-        # --convert-to pdf: formato de salida
-        # --outdir: directorio de salida
+        # Intentar usar Word si estamos en Windows
+        if sys.platform == 'win32':
+            try:
+                import win32com.client
+                
+                # Crear instancia de Word
+                word = win32com.client.Dispatch('Word.Application')
+                word.Visible = False
+                
+                # Abrir el documento
+                doc = word.Documents.Open(ruta_docx)
+                
+                # Guardar como PDF (formato 17 es PDF)
+                doc.SaveAs(ruta_pdf, FileFormat=17)
+                
+                # Cerrar documento y Word
+                doc.Close()
+                word.Quit()
+                
+                return os.path.exists(ruta_pdf)
+                
+            except ImportError:
+                print("    pywin32 no está instalado. Intentando con LibreOffice...")
+                print("    Para usar Word, instala: pip install pywin32")
+            except Exception as e:
+                print(f"    Error al usar Word: {e}")
+                print("    Intentando con LibreOffice...")
+        
+        # Intentar con LibreOffice (fallback o para Linux/Mac)
+        # Buscar LibreOffice en ubicaciones comunes de Windows
+        posibles_rutas = [
+            r'C:\Program Files\LibreOffice\program\soffice.exe',
+            r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
+            'libreoffice',  # En PATH
+            'soffice'  # En PATH
+        ]
+        
+        ejecutable = None
+        for ruta in posibles_rutas:
+            if os.path.exists(ruta) or ruta in ['libreoffice', 'soffice']:
+                ejecutable = ruta
+                break
+        
+        if not ejecutable:
+            print("Error: No se encontró LibreOffice instalado")
+            print("Instala LibreOffice desde: https://www.libreoffice.org/download/download/")
+            print("O instala pywin32 para usar Word: pip install pywin32")
+            return False
+        
         comando = [
-            'libreoffice',
+            ejecutable,
             '--headless',
             '--convert-to',
             'pdf',
