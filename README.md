@@ -64,15 +64,15 @@ Debe contener las siguientes columnas:
 
 ## 🎯 Cómo Usar el Programa
 
-### Paso 1: Configurar la ruta del Excel
+### Paso 1: Configurar las rutas
 
-Editar el archivo `main.py` y modificar la ruta al archivo Excel:
+Editar el archivo `main.py` y modificar las siguientes variables:
 
 ```python
-RUTA_EXCEL = r"C:\Users\TuNombre\Documents\data\nombre_archivo.xlsx"
+RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\2312_21312.xlsx"
+RUTA_SALIDA_PDF = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.pdf"
+NOMBRE_CASO = "caso"  # Cambiar por el nombre real del evaluado
 ```
-
-**Nota**: Los archivos de salida (DOCX, PDF e imagen) se generarán automáticamente en una carpeta llamada `informes_generados` dentro del mismo directorio donde se encuentra el script. Los nombres de archivo incluirán automáticamente el nombre completo del encuestado tomado del Excel.
 
 ### Paso 2: Ejecutar el programa
 
@@ -85,14 +85,11 @@ El programa ejecutará automáticamente los siguientes pasos:
 2. Calcular puntuaciones directas
 3. **Generar imagen final** `grafico_D2_final.png` con superposiciones
 4. Obtener puntuaciones típicas (baremos)
-5. Generar informe en formato Word con el nombre del encuestado
-6. Guardar el informe DOCX como `Informe_D2_{nombre_completo}.docx`
+5. Generar informe en formato Word (temporal)
+6. Guardar el informe DOCX
 7. **Convertir DOCX a PDF e insertar imagen como página 3**
 
-**Archivos generados**: Todos los archivos de salida se crean en la carpeta `informes_generados`:
-- `Informe_D2_{nombre_completo}.docx` - Documento Word con el informe
-- `Informe_D2_{nombre_completo}.pdf` - PDF final con el gráfico incluido
-- `grafico_D2_final.png` - Imagen del gráfico D2 con superposiciones
+**Nota**: La imagen `grafico_D2_final.png` se genera automáticamente en el mismo directorio del script.
 
 ## 📈 Puntuaciones Calculadas
 
