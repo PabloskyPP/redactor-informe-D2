@@ -39,7 +39,9 @@ Thumbs.db
 # Test files
 *.xlsx
 *.docx
+*.pdf
 !grafico_D2.png
+test_*.py
 
 # Generated images
 grafico_D2_final.png

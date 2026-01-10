@@ -8,7 +8,6 @@ from docx.shared import Pt, Inches, RGBColor, Emu
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
-from PIL import Image
 from textos import (
     PARRAFOS_FIJOS, PARRAFOS_VAR, PARRAFOS_TR, 
     PARRAFOS_O, PARRAFOS_C, PARRAFOS_CON,
@@ -152,55 +151,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     p_var = doc.add_paragraph()
     p_var.add_run("VAR. ").bold = True
     p_var.add_run("Esta puntuación de variación viene dada por la diferencia entre la serie de mayor y menor productividad (TR) de las 14 líneas de test.")
-    
-    doc.add_paragraph()  # Espacio
-    
-    # ========================================================================
-    # INSERTAR GRÁFICO D2
-    # ========================================================================
-    
-    # Ruta al gráfico final (en el mismo directorio que el script)
-    # Ahora usamos grafico_D2_final.png que incluye todas las superposiciones
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    grafico_path = os.path.join(script_dir, 'grafico_D2_final.png')
-    
-    if os.path.exists(grafico_path):
-        # Añadir el gráfico con dimensionamiento mejorado
-        # Obtener dimensiones de página (ignorar márgenes como se especifica en issue)
-        section = doc.sections[-1]
-        page_width = section.page_width
-        page_height = section.page_height
-        
-        # Leer dimensiones de la imagen
-        try:
-            img = Image.open(grafico_path)
-            img_width, img_height = img.size
-            img_aspect = img_width / img_height
-            page_aspect = page_width / page_height
-            
-            # Calcular dimensiones finales para ajustar tanto al techo como a la base
-            # manteniendo la proporción y sin deformación
-            if img_aspect > page_aspect:
-                # La imagen es más ancha proporcionalmente - limitar por ancho
-                final_width = page_width
-                final_height = page_width / img_aspect
-            else:
-                # La imagen es más alta proporcionalmente - limitar por alto
-                final_height = page_height
-                final_width = page_height * img_aspect
-            
-            # Añadir la imagen al documento con el tamaño calculado
-            paragraph_img = doc.add_paragraph()
-            paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            run_img = paragraph_img.add_run()
-            picture = run_img.add_picture(grafico_path, width=int(final_width), height=int(final_height))
-            
-        except Exception as e:
-            # Si hay algún error, usar un tamaño fijo razonable
-            paragraph_img = doc.add_paragraph()
-            paragraph_img.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            run_img = paragraph_img.add_run()
-            run_img.add_picture(grafico_path, width=Inches(7))
     
     doc.add_paragraph()  # Espacio
 

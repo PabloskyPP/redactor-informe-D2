@@ -7,6 +7,7 @@ from lector_datos import leer_datos_excel, calcular_puntuaciones_directas, mostr
 from reglas_psicometricas import obtener_puntuaciones_tipicas
 from generador_docx import crear_informe_docx, guardar_informe
 from generador_imagen_final import generar_imagen_final
+from generador_pdf import generar_pdf_final
 
 
 def main():
@@ -16,9 +17,11 @@ def main():
     # Configuración
     RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\Pablo Prada Campello.xlsx"
     script_dir = os.path.dirname(RUTA_EXCEL)
-    RUTA_SALIDA = os.path.join(script_dir, "Informe_D2_Resultado.docx")
+    RUTA_SALIDA_DOCX = os.path.join(script_dir, "Informe_D2_Resultado.docx")
+    RUTA_SALIDA_PDF = os.path.join(script_dir, "Informe_D2_Resultado.pdf")
     RUTA_IMAGEN_FINAL = os.path.join(script_dir, "grafico_D2_final.png")
-    RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
+    RUTA_SALIDA_DOCX = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
+    RUTA_SALIDA_PDF = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.pdf"
     NOMBRE_CASO = "pablo"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
@@ -113,13 +116,36 @@ def main():
     
     print()
     
-    # Paso 6: Guardar el informe
-    print("Paso 6: Guardando informe...")
+    # Paso 6: Guardar el informe DOCX (temporal)
+    print("Paso 6: Guardando informe DOCX...")
     try:
-        guardar_informe(documento, RUTA_SALIDA)
-        print(f"    Informe guardado en: {RUTA_SALIDA}")
+        guardar_informe(documento, RUTA_SALIDA_DOCX)
+        print(f"    Informe DOCX guardado en: {RUTA_SALIDA_DOCX}")
     except Exception as e:
         print(f"   X Error al guardar el informe: {e}")
+        sys.exit(1)
+    
+    print()
+    
+    # Paso 7: Convertir DOCX a PDF e insertar imagen como página 3
+    print("Paso 7: Generando PDF final con imagen en página 3...")
+    try:
+        # Obtener ruta de la imagen final
+        script_dir_img = os.path.dirname(os.path.abspath(__file__))
+        ruta_imagen = os.path.join(script_dir_img, 'grafico_D2_final.png')
+        
+        if not os.path.exists(ruta_imagen):
+            print(f"   X Error: No se encuentra la imagen en {ruta_imagen}")
+            sys.exit(1)
+        
+        exito = generar_pdf_final(RUTA_SALIDA_DOCX, ruta_imagen, RUTA_SALIDA_PDF)
+        if exito:
+            print(f"    PDF generado correctamente: {RUTA_SALIDA_PDF}")
+        else:
+            print(f"   X Error al generar el PDF final")
+            sys.exit(1)
+    except Exception as e:
+        print(f"   X Error al generar PDF: {e}")
         sys.exit(1)
     
     print()
@@ -127,7 +153,7 @@ def main():
     print("PROCESO COMPLETADO EXITOSAMENTE")
     print("=" * 70)
     print()
-    print(f"Puede abrir el informe en: {RUTA_SALIDA}")
+    print(f"Puede abrir el informe en: {RUTA_SALIDA_PDF}")
 
 
 if __name__ == "__main__":
