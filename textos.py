@@ -13,7 +13,7 @@ PARRAFOS_FIJOS = {
     
     'descripcion_prueba': """La prueba D2 es una prueba psicométrica estandarizada que evalúa de forma específica la atención selectiva y la concentración. Consiste en una tarea de cancelación en la que el evaluado debe, bajo presión temporal, identificar y marcar únicamente las letras "d" acompañadas de dos rayas (independientemente de su posición), ignorando otros estímulos distractores (letras "p" y letras "d" con diferente número de rayas). Los resultados obtenidos permiten analizar distintos indicadores del funcionamiento atencional, como la velocidad de procesamiento, la precisión, el control inhibitorio, la capacidad de concentración y la estabilidad del rendimiento a lo largo del tiempo. Estos indicadores son interpretados en relación con los baremos normativos correspondientes, esto es, comparando el rendimiento de {nombre} con el rendimiento promedio de su grupo de referencia, personas de su misma edad y género. Más allá, para una interpretación más individualizada, cobra importancia la valoración cualitativa del contexto personal y situacional del evaluado.""",
     
-    'titulo_resultados': "Presentación de los resultados del evaluado.",
+    'titulo_resultados': "Presentación de los resultados del evaluado.",  # Ahora este enunciado no se usa
     
     'titulo_resumen': "Resumen del rendimiento y perfil atencional de {nombre_completo} durante la prueba",
     

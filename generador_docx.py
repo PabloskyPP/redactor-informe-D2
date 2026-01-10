@@ -159,14 +159,6 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     # INSERTAR GRÁFICO D2
     # ========================================================================
     
-    # Título de resultados
-    titulo_resultados = doc.add_paragraph()
-    titulo_resultados.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    run = titulo_resultados.add_run(PARRAFOS_FIJOS['titulo_resultados'])
-    run.bold = True
-    run.font.size = Pt(14)
-    doc.add_paragraph()  # Espacio
-
     # Ruta al gráfico final (en el mismo directorio que el script)
     # Ahora usamos grafico_D2_final.png que incluye todas las superposiciones
     script_dir = os.path.dirname(os.path.abspath(__file__))
