@@ -17,11 +17,9 @@ def main():
     # Configuración
     RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\Pablo Prada Campello.xlsx"
     script_dir = os.path.dirname(RUTA_EXCEL)
-    RUTA_SALIDA_DOCX = os.path.join(script_dir, "Informe_D2_Resultado.docx")
-    RUTA_SALIDA_PDF = os.path.join(script_dir, "Informe_D2_Resultado.pdf")
-    RUTA_IMAGEN_FINAL = os.path.join(script_dir, "grafico_D2_final.png")
-    RUTA_SALIDA_DOCX = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
-    RUTA_SALIDA_PDF = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.pdf"
+    RUTA_SALIDA_DOCX = os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "Informe_D2_Resultado.docx")
+    RUTA_SALIDA_PDF = os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "Informe_D2_Resultado.pdf")
+    RUTA_IMAGEN_FINAL = os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "grafico_D2_final.png")
     NOMBRE_CASO = "pablo"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
@@ -76,7 +74,7 @@ def main():
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         ruta_base = os.path.join(script_dir, 'grafico_D2.png')
-        ruta_final = os.path.join(script_dir, 'grafico_D2_final.png')
+        ruta_final = RUTA_IMAGEN_FINAL
         
         exito = generar_imagen_final(resultados, resultados['datos_d2'], ruta_base, ruta_final)
         if exito:
@@ -130,9 +128,8 @@ def main():
     # Paso 7: Convertir DOCX a PDF e insertar imagen como página 3
     print("Paso 7: Generando PDF final con imagen en página 3...")
     try:
-        # Obtener ruta de la imagen final
-        script_dir_img = os.path.dirname(os.path.abspath(__file__))
-        ruta_imagen = os.path.join(script_dir_img, 'grafico_D2_final.png')
+        # Obtener ruta de la imagen final desde la carpeta de informes
+        ruta_imagen = RUTA_IMAGEN_FINAL
         
         if not os.path.exists(ruta_imagen):
             print(f"   X Error: No se encuentra la imagen en {ruta_imagen}")

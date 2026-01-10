@@ -375,7 +375,7 @@ def conectar_puntos_entre_filas(draw, puntos_por_fila):
 # ============================================================================
 
 def generar_imagen_final(resultados, datos_d2, ruta_grafico_base='grafico_D2.png', 
-                        ruta_salida='grafico_D2_final.png'):
+                        ruta_salida=r'C:\Users\Pablo\OneDrive\Escritorio\informes D2\grafico_D2_final.png'):
     """
     Genera la imagen final grafico_D2_final.png con todas las superposiciones
     
@@ -452,7 +452,8 @@ def generar_desde_resultados(resultados, script_dir=None):
         script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtener directorio del script actual
 
     ruta_base = os.path.join(script_dir, 'grafico_D2.png')  # Ruta de la imagen base
-    ruta_salida = os.path.join(script_dir, 'grafico_D2_final.png')  # Ruta de la imagen final
+    ruta_salida =  os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "grafico_D2_final.png")  # Ruta de la imagen final
+
 
     # Los resultados deben incluir el DataFrame datos_d2
     if 'datos_d2' not in resultados:
