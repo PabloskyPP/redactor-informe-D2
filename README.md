@@ -1,18 +1,27 @@
 # Generador de Informes Test D2 - Atención
 
-Este programa procesa los datos del Test D2 de Atención y genera un informe profesional en formato Word (.docx).
+Este programa procesa los datos del Test D2 de Atención y genera un informe profesional en formato PDF.
 
 ## 📋 Requisitos
 
 - Python 3.7 o superior
+- LibreOffice (para conversión de DOCX a PDF)
 - Las siguientes bibliotecas de Python:
   - pandas
   - openpyxl
   - python-docx
+  - pypdf
+  - reportlab
+  - Pillow
 
 ## 🚀 Instalación
 
-1. Instalar las dependencias:
+1. Instalar LibreOffice (si no está instalado):
+   - **Ubuntu/Debian**: `sudo apt-get install libreoffice-writer`
+   - **Windows**: Descargar desde https://www.libreoffice.org/
+   - **macOS**: `brew install --cask libreoffice`
+
+2. Instalar las dependencias de Python:
 ```bash
 pip install -r requirements.txt
 ```
@@ -28,6 +37,7 @@ proyecto_d2/
 ├── textos.py                    # Textos del informe
 ├── generador_imagen_final.py    # Genera grafico_D2_final.png con overlays
 ├── generador_docx.py            # Genera el documento Word
+├── generador_pdf.py             # Convierte DOCX a PDF e inserta imagen
 ├── grafico_D2.png               # Imagen base del gráfico D2
 ├── requirements.txt             # Dependencias del proyecto
 └── README.md                    # Este archivo
@@ -60,7 +70,7 @@ Editar el archivo `main.py` y modificar las siguientes variables:
 
 ```python
 RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\2312_21312.xlsx"
-RUTA_SALIDA = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.docx"
+RUTA_SALIDA_PDF = r"C:\Users\Pablo\OneDrive\Escritorio\data\Informe_D2_Resultado.pdf"
 NOMBRE_CASO = "caso"  # Cambiar por el nombre real del evaluado
 ```
 
@@ -75,8 +85,9 @@ El programa ejecutará automáticamente los siguientes pasos:
 2. Calcular puntuaciones directas
 3. **Generar imagen final** `grafico_D2_final.png` con superposiciones
 4. Obtener puntuaciones típicas (baremos)
-5. Generar informe en formato Word
-6. Guardar el informe
+5. Generar informe en formato Word (temporal)
+6. Guardar el informe DOCX
+7. **Convertir DOCX a PDF e insertar imagen como página 3**
 
 **Nota**: La imagen `grafico_D2_final.png` se genera automáticamente en el mismo directorio del script.
 
@@ -133,7 +144,7 @@ El programa clasifica automáticamente las puntuaciones según baremos por edad:
 
 ## 📄 Contenido del Informe
 
-El informe generado incluye:
+El informe generado es un archivo PDF que incluye:
 
 1. **Portada** (Primera página)
    - Título del test: "D2, TEST DE ATENCIÓN"
@@ -142,29 +153,31 @@ El informe generado incluye:
    - Fecha de aplicación (si está disponible)
    - Fecha del informe (generada automáticamente)
    - Nota de confidencialidad
-2. **Introducción** personalizada con el nombre del evaluado
-3. **Descripción de la prueba** y variables técnicas (TR, TA, O, C, E, TOT, CON, VAR)
-4. **GRÁFICO D2** (Página 3)
-   - Imagen final `grafico_D2_final.png` generada automáticamente
+2. **Introducción y Descripción de la prueba** (Segunda página)
+   - Introducción personalizada con el nombre del evaluado
+   - Descripción de la prueba y variables técnicas (TR, TA, O, C, E, TOT, CON, VAR)
+3. **GRÁFICO D2** (Tercera página) ⭐ **NUEVA UBICACIÓN**
+   - Imagen final `grafico_D2_final.png` insertada como página completa
    - Incluye todas las superposiciones gráficas:
      - Textos rotados verticalmente con puntuaciones totales (TR, TA, O, C)
      - Cuadros de texto por fila con valores de cada índice
      - Puntos negros marcando respuestas seleccionadas
      - Líneas conectando puntos finales entre filas
-   - Imagen escalada para ocupar verticalmente toda la página
+   - Imagen centrada y escalada para ajustarse a la página
    - Mantiene proporción sin deformación
-5. **Tabla de resultados** con puntuaciones directas y clasificaciones
-6. **Interpretación detallada** de cada índice:
-   - Variabilidad del rendimiento (VAR)
-   - Velocidad de procesamiento (TR)
-   - Errores de omisión (O)
-   - Errores de comisión (C)
-   - Concentración (CON)
-7. **Síntesis del perfil atencional** con interpretación integrada
+4. **Resultados e Interpretación** (Cuarta página en adelante)
+   - Tabla de resultados con puntuaciones directas y clasificaciones
+   - Interpretación detallada de cada índice:
+     - Variabilidad del rendimiento (VAR)
+     - Velocidad de procesamiento (TR)
+     - Errores de omisión (O)
+     - Errores de comisión (C)
+     - Concentración (CON)
+   - Síntesis del perfil atencional con interpretación integrada
 
 ## 🎨 Generación de Imagen Final
 
-El programa ahora genera automáticamente `grafico_D2_final.png` con superposiciones gráficas antes de insertarla en el informe. Esta imagen incluye:
+El programa genera automáticamente `grafico_D2_final.png` con superposiciones gráficas. Esta imagen se inserta como una página completa (página 3) en el PDF final. La imagen incluye:
 
 ### Elementos Superpuestos:
 - **Textos rotados**: Puntuaciones totales (TR_total, TA_total, O_total, C_total) rotados verticalmente
@@ -172,11 +185,23 @@ El programa ahora genera automáticamente `grafico_D2_final.png` con superposici
 - **Puntos negros**: Marcan cada posición donde el evaluado seleccionó un ítem (selected != FALSE)
 - **Líneas conectoras**: Unen el último punto de cada fila con el último punto de la fila siguiente
 
-### Ventajas:
+### Ventajas del nuevo formato PDF:
+- ✅ Imagen como página completa e independiente (página 3)
 - ✅ Mayor control sobre el posicionamiento gráfico
-- ✅ No depende de manipulación XML de Word
-- ✅ Proceso reproducible
-- ✅ Imagen pre-renderizada lista para insertar
+- ✅ No modifica el documento Word original
+- ✅ Proceso reproducible y automatizado
+- ✅ Imagen centrada y escalada correctamente en el PDF
+- ✅ El documento Word queda limpio sin la imagen
+
+## 📋 Nuevo Flujo de Generación
+
+1. Se genera el documento Word (DOCX) **sin** la imagen del gráfico
+2. El documento DOCX se convierte automáticamente a PDF usando LibreOffice
+3. La imagen `grafico_D2_final.png` se inserta como página 3 del PDF
+4. El resultado es un PDF con la estructura:
+   - Páginas 1-2: Contenido original del DOCX
+   - Página 3: Imagen del gráfico D2 (página completa)
+   - Páginas 4+: Resto del contenido original del DOCX
 
 ## 🔧 Configuración Avanzada
 
