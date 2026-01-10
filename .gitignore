@@ -46,3 +46,6 @@ test_*.py
 # Generated images
 grafico_D2_final.png
 grafico_D2_final_example.png
+
+# Generated output directory
+informes_generados/

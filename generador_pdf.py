@@ -23,8 +23,20 @@ def convertir_docx_a_pdf(ruta_docx, ruta_pdf):
         bool: True si la conversión fue exitosa, False en caso contrario
     """
     try:
+        # Convertir a rutas absolutas para asegurar que existen
+        ruta_docx = os.path.abspath(ruta_docx)
+        ruta_pdf = os.path.abspath(ruta_pdf)
+        
+        # Verificar que el archivo DOCX existe
+        if not os.path.exists(ruta_docx):
+            print(f"Error: El archivo DOCX no existe: {ruta_docx}")
+            return False
+        
         # Obtener directorio de salida
         directorio_salida = os.path.dirname(ruta_pdf)
+        
+        # Crear directorio de salida si no existe
+        os.makedirs(directorio_salida, exist_ok=True)
         
         # Usar LibreOffice para convertir DOCX a PDF
         # --headless: ejecutar sin interfaz gráfica

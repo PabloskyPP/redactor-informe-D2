@@ -16,10 +16,13 @@ def main():
     """
     # Configuración
     RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\Pablo Prada Campello.xlsx"
-    script_dir = os.path.dirname(RUTA_EXCEL)
-    RUTA_SALIDA_DOCX = os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "Informe_D2_Resultado.docx")
-    RUTA_SALIDA_PDF = os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "Informe_D2_Resultado.pdf")
-    RUTA_IMAGEN_FINAL = os.path.join(r"C:\Users\Pablo\OneDrive\Escritorio\informes D2", "grafico_D2_final.png")
+    
+    # Usar la carpeta del script como base para archivos de salida
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Crear directorio de salida si no existe (relativo al script)
+    directorio_salida = os.path.join(script_dir, "informes_generados")
+    os.makedirs(directorio_salida, exist_ok=True)
+    
     NOMBRE_CASO = "pablo"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
@@ -36,6 +39,12 @@ def main():
             print(f"    Nombre completo: {datos['nombre_completo']}")
             print(f"    Nombre: {datos['nombre']}")
         print(f"    Datos del test D2 cargados correctamente")
+        
+        # Configurar nombres de archivos de salida usando el nombre completo del encuestado
+        nombre_completo = datos.get('nombre_completo', NOMBRE_CASO)
+        RUTA_SALIDA_DOCX = os.path.join(directorio_salida, f"Informe_D2_{nombre_completo}.docx")
+        RUTA_SALIDA_PDF = os.path.join(directorio_salida, f"Informe_D2_{nombre_completo}.pdf")
+        RUTA_IMAGEN_FINAL = os.path.join(directorio_salida, "grafico_D2_final.png")
     except Exception as e:
         print(f"   X Error al leer el archivo: {e}")
         sys.exit(1)
