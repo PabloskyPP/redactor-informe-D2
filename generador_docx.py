@@ -173,8 +173,10 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
     for i, header in enumerate(headers):
         cell = tabla.rows[0].cells[i]
         cell.text = header
-        cell.paragraphs[0].runs[0].bold = True
         cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        # Solo poner en negrita el texto del encabezado
+        for run in cell.paragraphs[0].runs:
+            run.bold = True
     
     # Puntuaciones directas
     valores = [
@@ -208,6 +210,36 @@ def crear_informe_docx(resultados, clasificaciones, nombre_caso="caso"):
         cell.text = clasif
         cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     
+    # Colorear celdas según el rendimiento
+    # Verde si es alto, rojo si es bajo (columnas: TR, TA, TOT, CON)
+    green_if_high = [0, 1, 5, 6]
+    # Rojo si es alto, verde si es bajo (columnas: O, C, VAR)
+    red_if_high = [2, 3, 7]
+    
+    row3 = tabla.rows[2]
+    
+    for idx in green_if_high:
+        clasificacion = str(row3.cells[idx].text).lower()
+        if clasificacion == 'muy alto':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="00B050"/>'.format(nsdecls('w'))))
+        elif clasificacion == 'alto':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="90EE90"/>'.format(nsdecls('w'))))
+        elif clasificacion == 'muy bajo':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="C00000"/>'.format(nsdecls('w'))))
+        elif clasificacion == 'bajo':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="FF6B6B"/>'.format(nsdecls('w'))))
+    
+    for idx in red_if_high:
+        clasificacion = str(row3.cells[idx].text).lower()
+        if clasificacion == 'muy alto':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="C00000"/>'.format(nsdecls('w'))))
+        elif clasificacion == 'alto':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="FF6B6B"/>'.format(nsdecls('w'))))
+        elif clasificacion == 'muy bajo':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="00B050"/>'.format(nsdecls('w'))))
+        elif clasificacion == 'bajo':
+            row3.cells[idx]._element.get_or_add_tcPr().append(parse_xml(r'<w:shd {} w:fill="90EE90"/>'.format(nsdecls('w'))))
+
     doc.add_paragraph()  # Espacio
     
     # ========================================================================
