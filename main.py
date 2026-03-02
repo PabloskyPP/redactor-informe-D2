@@ -16,14 +16,16 @@ def main():
     """
     # Configuración
     RUTA_EXCEL = r"C:\Users\Pablo\OneDrive\Escritorio\data\Pablo Prada Campello.xlsx"
-
+    # Extraer NOMBRE_CASO del nombre del archivo Excel (primera palabra antes del espacio)
+    nombre_archivo = os.path.basename(RUTA_EXCEL)
+    NOMBRE_CASO = nombre_archivo.split()[0] if nombre_archivo.split() else "Informe"
+    
     # Usar la carpeta del script como base para archivos de salida
     script_dir = os.path.dirname(os.path.abspath(__file__))
     # Crear directorio de salida si no existe (relativo al script)
     directorio_salida = os.path.join(script_dir, "informes_generados")
     os.makedirs(directorio_salida, exist_ok=True)
 
-    NOMBRE_CASO = "pablo"  # Nombre de fallback si no está en el Excel (se usa sub_num si está disponible)
     
     print("=" * 70)
     print("GENERADOR DE INFORME TEST D2 - ATENCIÓN")
